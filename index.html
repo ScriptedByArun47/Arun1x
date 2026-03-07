@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>0xH4X — Cybersecurity Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SCANLINE OVERLAY -->
+<div class="scanlines"></div>
+<div class="noise-overlay"></div>
+
+<!-- TERMINAL BOOT SCREEN -->
+<div id="boot-screen">
+  <div class="boot-content">
+    <div class="boot-logo">[ 0xH4X ]</div>
+    <div id="boot-log"></div>
+    <div class="boot-cursor">█</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-brand">
+    <span class="bracket">[</span>
+    <span class="brand-name">0xH4X</span>
+    <span class="bracket">]</span>
+    <span class="nav-status">● ONLINE</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#home" class="nav-link active" data-section="home">/home</a></li>
+    <li><a href="#projects" class="nav-link" data-section="projects">/projects</a></li>
+    <li><a href="#writeups" class="nav-link" data-section="writeups">/writeups</a></li>
+    <li><a href="#ctf" class="nav-link" data-section="ctf">/ctf</a></li>
+    <li><a href="#skills" class="nav-link" data-section="skills">/skills</a></li>
+    <li><a href="#contact" class="nav-link" data-section="contact">/contact</a></li>
+  </ul>
+  <div class="nav-toggle" id="navToggle">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-label">// SECURITY RESEARCHER & CTF PLAYER</div>
+    <h1 class="hero-title">
+      <span class="glitch" data-text="HACK THE">HACK THE</span><br>
+      <span class="hero-accent glitch" data-text="PLANET.">PLANET.</span>
+    </h1>
+    <p class="hero-desc">
+      Penetration tester. CTF enthusiast. Documenting the art of breaking things<br>
+      to understand how to defend them.
+    </p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" data-count="47">0</span>
+        <span class="stat-label">CTF Solved</span>
+      </div>
+      <div class="stat-divider">|</div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="23">0</span>
+        <span class="stat-label">Write-ups</span>
+      </div>
+      <div class="stat-divider">|</div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="12">0</span>
+        <span class="stat-label">Projects</span>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a href="#writeups" class="btn-primary">Read Write-ups</a>
+      <a href="#ctf" class="btn-secondary">CTF Challenges</a>
+    </div>
+  </div>
+  <div class="hero-terminal">
+    <div class="terminal-header">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="terminal-title">~/ kali@0xH4X</span>
+    </div>
+    <div class="terminal-body" id="heroTerminal"></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="section projects-section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">PROJECTS<span class="cursor-blink">_</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid" id="projectsGrid">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- WRITEUPS -->
+<section id="writeups" class="section writeups-section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">WRITE-UPS<span class="cursor-blink">_</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="writeup-filters">
+    <button class="filter-btn active" data-filter="all">ALL</button>
+    <button class="filter-btn" data-filter="tryhackme">TryHackMe</button>
+    <button class="filter-btn" data-filter="portswigger">PortSwigger</button>
+    <button class="filter-btn" data-filter="picoctf">PicoCTF</button>
+    <button class="filter-btn" data-filter="daily">Daily</button>
+  </div>
+  <div class="writeups-grid" id="writeupsGrid">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- CTF CHALLENGES -->
+<section id="ctf" class="section ctf-section">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">CTF CHALLENGES<span class="cursor-blink">_</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="ctf-platforms">
+    <div class="platform-card" data-platform="tryhackme">
+      <div class="platform-icon">🔴</div>
+      <div class="platform-name">TryHackMe</div>
+      <div class="platform-rank">Top 2%</div>
+      <div class="platform-badge">HACKER</div>
+    </div>
+    <div class="platform-card" data-platform="portswigger">
+      <div class="platform-icon">🟠</div>
+      <div class="platform-name">PortSwigger</div>
+      <div class="platform-rank">Expert</div>
+      <div class="platform-badge">WEB SECURITY</div>
+    </div>
+    <div class="platform-card" data-platform="picoctf">
+      <div class="platform-icon">🟡</div>
+      <div class="platform-name">PicoCTF</div>
+      <div class="platform-rank">1337pts</div>
+      <div class="platform-badge">COMPETITOR</div>
+    </div>
+  </div>
+  <div class="ctf-table-wrapper">
+    <table class="ctf-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>CHALLENGE</th>
+          <th>PLATFORM</th>
+          <th>CATEGORY</th>
+          <th>DIFFICULTY</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody id="ctfTableBody">
+        <!-- Populated by JS -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section skills-section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">SKILLS<span class="cursor-blink">_</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-container">
+    <div class="skills-col">
+      <div class="skill-category">
+        <h3 class="skill-cat-title">&gt; OFFENSIVE</h3>
+        <div class="skill-bars" id="offensiveSkills"></div>
+      </div>
+      <div class="skill-category">
+        <h3 class="skill-cat-title">&gt; WEB SECURITY</h3>
+        <div class="skill-bars" id="webSkills"></div>
+      </div>
+    </div>
+    <div class="skills-col">
+      <div class="skill-category">
+        <h3 class="skill-cat-title">&gt; TOOLS</h3>
+        <div class="tools-grid" id="toolsGrid"></div>
+      </div>
+      <div class="skill-category">
+        <h3 class="skill-cat-title">&gt; CERTS & BADGES</h3>
+        <div class="certs-list" id="certsList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section contact-section">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">CONTACT<span class="cursor-blink">_</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-container">
+    <div class="contact-info">
+      <p class="contact-tagline">// Want to collaborate, report a bug, or just talk hacking?</p>
+      <div class="contact-links">
+        <a href="#" class="contact-link"><span class="cl-icon">⚡</span> github.com/0xH4X</a>
+        <a href="#" class="contact-link"><span class="cl-icon">🐦</span> @0xH4X</a>
+        <a href="#" class="contact-link"><span class="cl-icon">📧</span> 0xh4x@protonmail.com</a>
+        <a href="#" class="contact-link"><span class="cl-icon">💬</span> Discord: 0xH4X#1337</a>
+      </div>
+    </div>
+    <form class="contact-form" id="contactForm">
+      <div class="form-group">
+        <label class="form-label">// YOUR HANDLE</label>
+        <input type="text" class="form-input" placeholder="anonymous@shell" id="contactName"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">// EMAIL</label>
+        <input type="email" class="form-input" placeholder="user@domain.tld" id="contactEmail"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">// MESSAGE</label>
+        <textarea class="form-input form-textarea" placeholder="Describe your objective..." id="contactMsg"></textarea>
+      </div>
+      <button type="button" class="btn-primary" id="sendBtn">TRANSMIT &gt;&gt;</button>
+      <div id="formStatus"></div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-content">
+    <span class="footer-brand">[0xH4X]</span>
+    <span class="footer-text">// All systems operational. Stay paranoid.</span>
+    <span class="footer-ip" id="footerTime"></span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
