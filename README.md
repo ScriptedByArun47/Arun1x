@@ -1,4 +1,4 @@
-# 0xH4X — Cybersecurity Portfolio
+# Arun1x — Cybersecurity Portfolio
 
 A full-stack cybersecurity portfolio website with terminal aesthetics, CTF tracking, writeups, and project showcase.
 
@@ -106,5 +106,18 @@ Edit `app.js` to update:
 - `OFFENSIVE_SKILLS` / `WEB_SKILLS` — your skill levels (0–100)
 
 ---
+👨‍💻 Author
 
+Arun Kumar
+
+Cybersecurity Enthusiast
+Web Penetration Testing · CTF Player
+
+⭐ Support
+
+If you find this project useful:
+
+⭐ Star the repository
+🐛 Report issues
+🔧 Submit improvements
 
