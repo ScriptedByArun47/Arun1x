@@ -1,4 +1,4 @@
-# 0xH4X — Cybersecurity Portfolio
+# Arun1X — Cybersecurity Portfolio
 
 A full-stack cybersecurity portfolio website with terminal aesthetics, CTF tracking, writeups, and project showcase.
 
@@ -67,6 +67,8 @@ uvicorn main:app --reload --port 8000
 Visit: **http://localhost:8000/docs** (Swagger UI auto-generated)
 
 ---
+
+
 
 ## 🔌 API Endpoints
 
