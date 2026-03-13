@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="ArunKumar L — Cybersecurity Intern, TryHackMe Top 2%, Pentesting & SOC Portfolio"/>
+  <meta name="keywords" content="cybersecurity, pentesting, CTF, TryHackMe, OWASP, SOC, writeups"/>
+  <meta property="og:title" content="Arun1x — Cybersecurity Portfolio"/>
+  <meta property="og:description" content="TryHackMe Top 2% · Pentesting · OWASP · Security Tools"/>
+  <meta property="og:type" content="website"/>
   <title>Arun1x — Cybersecurity Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
@@ -10,11 +15,10 @@
 </head>
 <body>
 
-<!-- SCANLINE OVERLAY -->
 <div class="scanlines"></div>
 <div class="noise-overlay"></div>
 
-<!-- TERMINAL BOOT SCREEN -->
+<!-- BOOT SCREEN -->
 <div id="boot-screen">
   <div class="boot-content">
     <div class="boot-logo">[ Arun1x ]</div>
@@ -32,16 +36,14 @@
     <span class="nav-status">● ONLINE</span>
   </div>
   <ul class="nav-links">
-    <li><a href="#home" class="nav-link active" data-section="home">/home</a></li>
+    <li><a href="#home"     class="nav-link active" data-section="home">/home</a></li>
     <li><a href="#projects" class="nav-link" data-section="projects">/projects</a></li>
     <li><a href="#writeups" class="nav-link" data-section="writeups">/writeups</a></li>
-    <li><a href="#ctf" class="nav-link" data-section="ctf">/ctf</a></li>
-    <li><a href="#skills" class="nav-link" data-section="skills">/skills</a></li>
-    <li><a href="#contact" class="nav-link" data-section="contact">/contact</a></li>
+    <li><a href="#ctf"      class="nav-link" data-section="ctf">/ctf</a></li>
+    <li><a href="#skills"   class="nav-link" data-section="skills">/skills</a></li>
+    <li><a href="#contact"  class="nav-link" data-section="contact">/contact</a></li>
   </ul>
-  <div class="nav-toggle" id="navToggle">
-    <span></span><span></span><span></span>
-  </div>
+  <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
 </nav>
 
 <!-- HERO -->
@@ -75,14 +77,12 @@
     </div>
     <div class="hero-actions">
       <a href="#writeups" class="btn-primary">Read Write-ups</a>
-      <a href="#ctf" class="btn-secondary">CTF Challenges</a>
+      <a href="#ctf"      class="btn-secondary">CTF Challenges</a>
     </div>
   </div>
   <div class="hero-terminal">
     <div class="terminal-header">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
+      <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
       <span class="terminal-title">~/ kali@Arun1x</span>
     </div>
     <div class="terminal-body" id="heroTerminal"></div>
@@ -96,9 +96,7 @@
     <h2 class="section-title">PROJECTS<span class="cursor-blink">_</span></h2>
     <div class="section-line"></div>
   </div>
-  <div class="projects-grid" id="projectsGrid">
-    <!-- Populated by JS -->
-  </div>
+  <div class="projects-grid" id="projectsGrid"></div>
 </section>
 
 <!-- WRITEUPS -->
@@ -115,12 +113,10 @@
     <button class="filter-btn" data-filter="picoctf">PicoCTF</button>
     <button class="filter-btn" data-filter="daily">Daily</button>
   </div>
-  <div class="writeups-grid" id="writeupsGrid">
-    <!-- Populated by JS -->
-  </div>
+  <div class="writeups-grid" id="writeupsGrid"></div>
 </section>
 
-<!-- CTF CHALLENGES -->
+<!-- CTF -->
 <section id="ctf" class="section ctf-section">
   <div class="section-header">
     <span class="section-num">03</span>
@@ -128,19 +124,19 @@
     <div class="section-line"></div>
   </div>
   <div class="ctf-platforms">
-    <div class="platform-card" data-platform="tryhackme">
+    <div class="platform-card">
       <div class="platform-icon">🔴</div>
       <div class="platform-name">TryHackMe</div>
       <div class="platform-rank">Top 2%</div>
       <div class="platform-badge">HACKER</div>
     </div>
-    <div class="platform-card" data-platform="portswigger">
+    <div class="platform-card">
       <div class="platform-icon">🟠</div>
       <div class="platform-name">PortSwigger</div>
       <div class="platform-rank">Expert</div>
       <div class="platform-badge">WEB SECURITY</div>
     </div>
-    <div class="platform-card" data-platform="picoctf">
+    <div class="platform-card">
       <div class="platform-icon">🟡</div>
       <div class="platform-name">PicoCTF</div>
       <div class="platform-rank">1337pts</div>
@@ -149,19 +145,8 @@
   </div>
   <div class="ctf-table-wrapper">
     <table class="ctf-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>CHALLENGE</th>
-          <th>PLATFORM</th>
-          <th>CATEGORY</th>
-          <th>DIFFICULTY</th>
-          <th>STATUS</th>
-        </tr>
-      </thead>
-      <tbody id="ctfTableBody">
-        <!-- Populated by JS -->
-      </tbody>
+      <thead><tr><th>#</th><th>CHALLENGE</th><th>PLATFORM</th><th>CATEGORY</th><th>DIFFICULTY</th><th>STATUS</th></tr></thead>
+      <tbody id="ctfTableBody"></tbody>
     </table>
   </div>
 </section>
@@ -190,7 +175,7 @@
         <div class="tools-grid" id="toolsGrid"></div>
       </div>
       <div class="skill-category">
-        <h3 class="skill-cat-title">&gt; CERTS & BADGES</h3>
+        <h3 class="skill-cat-title">&gt; CERTS &amp; BADGES</h3>
         <div class="certs-list" id="certsList"></div>
       </div>
     </div>
@@ -208,25 +193,25 @@
     <div class="contact-info">
       <p class="contact-tagline">// Want to collaborate, report a bug, or just talk hacking?</p>
       <div class="contact-links">
-        <a href="https://github.com/ScriptedByArun47" target="_blank" class="contact-link"><span class="cl-icon">⚡</span> github.com/ArunKumarL</a>
-        <a href="https://www.linkedin.com/in/arun0x47" target="_blank" class="contact-link"><span class="cl-icon">💼</span> linkedin.com/in/arunkumarl</a>
-        <a href="https://tryhackme.com/p/Arun1x" target="_blank" class="contact-link"><span class="cl-icon">🎯</span> TryHackMe — Top 2%</a>
-        <a href="mailto:arun47akkumar@gmail.com" class="contact-link"><span class="cl-icon">📧</span> arun47akkumar@gmail.com</a>
-        <a href="tel:+916379440923" class="contact-link"><span class="cl-icon">📱</span> +91 63794 40923</a>
+        <a href="https://github.com/ArunKumarL"        target="_blank" class="contact-link"><span class="cl-icon">⚡</span> github.com/ArunKumarL</a>
+        <a href="https://linkedin.com/in/arunkumarl"   target="_blank" class="contact-link"><span class="cl-icon">💼</span> linkedin.com/in/arunkumarl</a>
+        <a href="https://tryhackme.com/p/Arun1x"       target="_blank" class="contact-link"><span class="cl-icon">🎯</span> TryHackMe — Top 2%</a>
+        <a href="mailto:arun47akkumar@gmail.com"                        class="contact-link"><span class="cl-icon">📧</span> arun47akkumar@gmail.com</a>
+        <a href="tel:+916379440923"                                     class="contact-link"><span class="cl-icon">📱</span> +91 63794 40923</a>
       </div>
     </div>
     <form class="contact-form" id="contactForm">
       <div class="form-group">
         <label class="form-label">// YOUR HANDLE</label>
-        <input type="text" class="form-input" placeholder="anonymous@shell" id="contactName"/>
+        <input type="text"  class="form-input" placeholder="anonymous@shell"   id="contactName"/>
       </div>
       <div class="form-group">
         <label class="form-label">// EMAIL</label>
-        <input type="email" class="form-input" placeholder="user@domain.tld" id="contactEmail"/>
+        <input type="email" class="form-input" placeholder="user@domain.tld"   id="contactEmail"/>
       </div>
       <div class="form-group">
         <label class="form-label">// MESSAGE</label>
-        <textarea class="form-input form-textarea" placeholder="Describe your objective..." id="contactMsg"></textarea>
+        <textarea           class="form-input form-textarea" placeholder="Describe your objective..." id="contactMsg"></textarea>
       </div>
       <button type="button" class="btn-primary" id="sendBtn">TRANSMIT &gt;&gt;</button>
       <div id="formStatus"></div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Writeup — 0xH4X</title>
+  <title>Writeup — Arun1x</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
@@ -59,90 +59,58 @@
     }
     @keyframes spin { to { transform:rotate(360deg); } }
 
-    /* ── HEADER ── */
+    /* ── WRITEUP HEADER ── */
     .writeup-header { margin-bottom:3rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
     .header-meta { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
     .platform-badge {
-      font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.15em;
-      padding:0.3rem 0.8rem;
+      font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.15em; padding:0.3rem 0.8rem;
     }
     .platform-thm   { background:rgba(255,68,68,0.15);  color:#ff4444; border:1px solid rgba(255,68,68,0.3); }
     .platform-ps    { background:rgba(255,170,0,0.15);  color:#ffaa00; border:1px solid rgba(255,170,0,0.3); }
     .platform-pico  { background:rgba(0,207,255,0.15);  color:#00cfff; border:1px solid rgba(0,207,255,0.3); }
     .platform-daily { background:rgba(0,255,136,0.15);  color:#00ff88; border:1px solid rgba(0,255,136,0.3); }
     .meta-date { font-family:var(--font-mono); font-size:0.75rem; color:var(--text-dim); }
-    .diff-badge {
-      font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.1em;
-      padding:0.25rem 0.6rem;
-    }
+    .diff-badge { font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.1em; padding:0.25rem 0.6rem; }
     .diff-easy   { background:rgba(0,255,136,0.1);  color:#00ff88; border:1px solid rgba(0,255,136,0.3); }
     .diff-medium { background:rgba(255,170,0,0.1);  color:#ffaa00; border:1px solid rgba(255,170,0,0.3); }
     .diff-hard   { background:rgba(255,68,68,0.1);  color:#ff4444; border:1px solid rgba(255,68,68,0.3); }
-
-    .writeup-title { font-family:var(--font-head); font-size:clamp(1.8rem,4vw,2.8rem); font-weight:700; color:var(--text); line-height:1.1; margin-bottom:1rem; }
-    .writeup-excerpt { font-size:1rem; color:var(--text-dim); line-height:1.8; margin-bottom:1.2rem; }
-    .writeup-tags { display:flex; gap:0.5rem; flex-wrap:wrap; }
-    .wtag { font-family:var(--font-mono); font-size:0.65rem; color:var(--text-dim); }
-
-    /* ── CATEGORY / FILE INFO ── */
+    .writeup-title  { font-family:var(--font-head); font-size:clamp(1.8rem,4vw,2.8rem); font-weight:700; color:var(--text); line-height:1.1; margin-bottom:1rem; }
+    .writeup-excerpt{ font-size:1rem; color:var(--text-dim); line-height:1.8; margin-bottom:1.2rem; }
+    .writeup-tags   { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .wtag           { font-family:var(--font-mono); font-size:0.65rem; color:var(--text-dim); }
     .file-info {
       display:inline-flex; align-items:center; gap:0.5rem;
       font-family:var(--font-mono); font-size:0.7rem; color:var(--text-dim);
       padding:0.4rem 0.8rem; background:var(--bg3); border:1px solid var(--border);
-      margin-bottom:0.5rem;
     }
 
     /* ── TABLE OF CONTENTS ── */
-    .toc-box {
-      background:var(--bg2); border:1px solid var(--border);
-      border-left:3px solid var(--accent2); padding:1.5rem; margin-bottom:3rem;
-    }
+    .toc-box { background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--accent2); padding:1.5rem; margin-bottom:3rem; }
     .toc-title { font-family:var(--font-mono); font-size:0.75rem; color:var(--accent2); letter-spacing:0.2em; margin-bottom:1rem; }
-    .toc-list { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
-    .toc-item a {
-      font-family:var(--font-mono); font-size:0.8rem; color:var(--text-dim);
-      text-decoration:none; transition:color 0.2s;
-    }
+    .toc-list  { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+    .toc-item a { font-family:var(--font-mono); font-size:0.8rem; color:var(--text-dim); text-decoration:none; transition:color 0.2s; }
     .toc-item a:hover { color:var(--accent); }
     .toc-item.h3 { padding-left:1.2rem; }
     .toc-item.h4 { padding-left:2.4rem; }
 
     /* ── MARKDOWN CONTENT ── */
     .md-content { line-height:1.8; }
-
     .md-h1 { font-family:var(--font-head); font-size:2rem; font-weight:700; color:var(--text); margin:2.5rem 0 1rem; padding-bottom:0.6rem; border-bottom:1px solid var(--border); }
     .md-h2 { font-family:var(--font-head); font-size:1.4rem; font-weight:700; color:var(--accent2); margin:2.5rem 0 0.75rem; letter-spacing:0.05em; padding-left:0.8rem; border-left:3px solid var(--accent2); }
     .md-h3 { font-family:var(--font-head); font-size:1.1rem; font-weight:600; color:var(--accent); margin:2rem 0 0.5rem; }
     .md-h4 { font-family:var(--font-head); font-size:1rem; font-weight:600; color:var(--text); margin:1.5rem 0 0.5rem; }
-    .md-p { font-size:0.95rem; color:var(--text); line-height:1.9; margin-bottom:1.1rem; }
+    .md-p  { font-size:0.95rem; color:var(--text); line-height:1.9; margin-bottom:1.1rem; }
     .md-bold { color:#fff; font-weight:700; }
     .md-hr { border:none; border-top:1px solid var(--border); margin:2.5rem 0; }
 
-    /* Code blocks */
-    .md-pre {
-      background:#020810; border:1px solid var(--border);
-      border-left:3px solid var(--accent); margin:1.5rem 0; overflow:hidden;
-    }
-    .md-pre-header {
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0.4rem 1rem; background:var(--bg3); border-bottom:1px solid var(--border);
-    }
-    .md-lang { font-family:var(--font-mono); font-size:0.65rem; color:var(--accent2); letter-spacing:0.15em; }
-    .copy-btn {
-      font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.1em;
-      background:transparent; border:1px solid var(--border); color:var(--text-dim);
-      padding:0.2rem 0.6rem; cursor:pointer; transition:all 0.2s;
-    }
+    /* Code */
+    .md-pre { background:#020810; border:1px solid var(--border); border-left:3px solid var(--accent); margin:1.5rem 0; overflow:hidden; }
+    .md-pre-header { display:flex; align-items:center; justify-content:space-between; padding:0.4rem 1rem; background:var(--bg3); border-bottom:1px solid var(--border); }
+    .md-lang  { font-family:var(--font-mono); font-size:0.65rem; color:var(--accent2); letter-spacing:0.15em; }
+    .copy-btn { font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.1em; background:transparent; border:1px solid var(--border); color:var(--text-dim); padding:0.2rem 0.6rem; cursor:pointer; transition:all 0.2s; }
     .copy-btn:hover { border-color:var(--accent); color:var(--accent); }
-    .md-code {
-      display:block; padding:1.2rem; font-family:var(--font-mono); font-size:0.82rem;
-      color:#a8e6cf; line-height:1.7; overflow-x:auto; white-space:pre;
-    }
-    .md-inline {
-      font-family:var(--font-mono); font-size:0.85em;
-      background:rgba(0,255,136,0.1); color:var(--accent);
-      padding:0.1em 0.4em; border:1px solid rgba(0,255,136,0.2);
-    }
+    .md-code  { display:block; padding:1.2rem; font-family:var(--font-mono); font-size:0.82rem; color:#a8e6cf; line-height:1.7; overflow-x:auto; white-space:pre; }
+    .md-inline { font-family:var(--font-mono); font-size:0.85em; background:rgba(0,255,136,0.1); color:var(--accent); padding:0.1em 0.4em; border:1px solid rgba(0,255,136,0.2); }
 
     /* Tables */
     .md-table { width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:0.875rem; overflow-x:auto; display:block; }
@@ -157,17 +125,24 @@
     .md-ol .md-li::marker { color:var(--accent2); font-family:var(--font-mono); font-size:0.8rem; }
 
     /* Blockquote */
-    .md-blockquote {
-      border-left:3px solid var(--accent4); padding:0.8rem 1.2rem;
-      background:rgba(255,170,0,0.05); margin:1.5rem 0; font-style:italic;
-      color:var(--text-dim);
-    }
+    .md-blockquote { border-left:3px solid var(--accent4); padding:0.8rem 1.2rem; background:rgba(255,170,0,0.05); margin:1.5rem 0; font-style:italic; color:var(--text-dim); }
 
-    /* ── FOOTER NAV ── */
-    .page-footer {
-      margin-top:4rem; padding-top:2rem; border-top:1px solid var(--border);
-      display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+    /* ── IMAGES — Medium style ── */
+    .md-img-wrap {
+      margin:2.5rem -2rem; text-align:center;
+      background:var(--bg2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+      padding:1.5rem 2rem;
     }
+    .md-img-wrap img {
+      max-width:100%; height:auto; display:block; margin:0 auto;
+      border:1px solid var(--border); border-radius:2px;
+      box-shadow:0 4px 30px rgba(0,0,0,0.5); cursor:zoom-in;
+    }
+    .md-img-caption { font-family:var(--font-mono); font-size:0.7rem; color:var(--text-dim); margin-top:0.75rem; letter-spacing:0.05em; }
+    .md-img-num { color:var(--accent2); margin-right:0.4rem; }
+
+    /* ── PAGE FOOTER ── */
+    .page-footer { margin-top:4rem; padding-top:2rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
     .footer-brand { font-family:var(--font-mono); font-size:0.75rem; color:var(--text-dim); }
 
     /* ── SCROLL TO TOP ── */
@@ -179,42 +154,12 @@
       opacity:0; pointer-events:none;
     }
     #scrollTop.visible { opacity:1; pointer-events:all; }
-    #scrollTop:hover { border-color:var(--accent); box-shadow:var(--glow); }
-
-    /* ── IMAGES (Medium style) ── */
-    .md-img-wrap {
-      margin: 2.5rem -2rem;
-      text-align: center;
-      background: var(--bg2);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 1.5rem 2rem;
-    }
-    .md-img-wrap img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
-    }
-    .md-img-caption {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      margin-top: 0.75rem;
-      letter-spacing: 0.05em;
-    }
-    .md-img-num {
-      color: var(--accent2);
-      margin-right: 0.4rem;
-    }
+    #scrollTop:hover   { border-color:var(--accent); box-shadow:var(--glow); }
 
     @media(max-width:600px) {
-      .topbar { padding:0.8rem 1.2rem; }
-      .page-wrap { padding:2rem 1.2rem 4rem; }
-      .md-img-wrap { margin: 2rem -1.2rem; padding: 1rem 1.2rem; }
+      .topbar         { padding:0.8rem 1.2rem; }
+      .page-wrap      { padding:2rem 1.2rem 4rem; }
+      .md-img-wrap    { margin:2rem -1.2rem; padding:1rem 1.2rem; }
     }
   </style>
 </head>
@@ -228,12 +173,11 @@
   <span class="topbar-views" id="viewCount"></span>
 </div>
 
-<!-- MAIN -->
 <div class="page-wrap">
   <div id="pageContent">
     <div class="state-box">
       <div class="spinner"></div>
-      <div class="state-msg">Loading writeup...</div>
+      <div class="state-msg">// Loading writeup...</div>
     </div>
   </div>
 </div>
@@ -241,65 +185,61 @@
 <button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ TOP</button>
 
 <script>
-const API = "http://localhost:8000";
+/* ── DEPLOYMENT CONFIG — same URL as app.js ── */
+const API = "https://YOUR_BACKEND_URL_HERE";   // ← change this before deploying
 
-/* ── Get slug from URL ?slug=xxx ── */
 function getSlug() {
   return new URLSearchParams(window.location.search).get("slug");
 }
 
-/* ── Platform badge class ── */
 function platformClass(p) {
   return p === "tryhackme" ? "thm" : p === "portswigger" ? "ps" : p === "picoctf" ? "pico" : "daily";
 }
 
-/* ── Copy code ── */
 function copyCode(btn) {
-  const code = btn.closest("pre").querySelector("code").textContent;
+  const code = btn.closest(".md-pre").querySelector("code").textContent;
   navigator.clipboard.writeText(code).then(() => {
     btn.textContent = "COPIED ✓";
     setTimeout(() => btn.textContent = "COPY", 2000);
   });
 }
 
-/* ── Markdown → HTML renderer ── */
+/* ================================================================
+   MARKDOWN RENDERER
+   Order: extract code → extract images → escape HTML → format
+   ================================================================ */
 function renderMarkdown(md) {
-  // STEP 1 — pull out code blocks first (protect from all other processing)
+  // 1. Pull out code blocks
   const blocks = [];
   md = md.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
-    const i = blocks.length;
     blocks.push({ lang: lang || "bash", code: code.trimEnd() });
-    return `%%CODEBLOCK${i}%%`;
+    return `%%CODE${blocks.length - 1}%%`;
   });
 
-  // STEP 2 — pull out images BEFORE any escaping or line processing
-  //   Matches: ![alt](https://... or data:image/...)
-  //   Must happen before HTML escape so URLs stay intact
+  // 2. Pull out ALL images before HTML escaping
+  //    Handles Cloudinary https:// and any data: URIs
   const images = [];
-  md = md.replace(/^!\[([^\]]*)\]\(([^)\n]+)\)$/gm, (_, alt, src) => {
-    const i = images.length;
+  md = md.replace(/^!\[([^\]]*)\]\(([^\)\n]+)\)$/gm, (_, alt, src) => {
     images.push({ alt: alt || "screenshot", src: src.trim() });
-    return `%%IMAGE${i}%%`;
+    return `%%IMG${images.length - 1}%%`;
   });
-  // Also catch inline images (not on their own line)
-  md = md.replace(/!\[([^\]]*)\]\(([^)\n]+)\)/g, (_, alt, src) => {
-    const i = images.length;
+  // Catch inline images too
+  md = md.replace(/!\[([^\]]*)\]\(([^\)\n]+)\)/g, (_, alt, src) => {
     images.push({ alt: alt || "screenshot", src: src.trim() });
-    return `%%IMAGE${i}%%`;
+    return `%%IMG${images.length - 1}%%`;
   });
 
-  // STEP 3 — HTML escape (safe now — images/code already removed)
-  let html = md
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  // 3. HTML escape
+  let html = md.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
-  // STEP 4 — inline formatting
+  // 4. Inline formatting
   html = html
-    .replace(/`([^`]+)`/g, '<code class="md-inline">$1</code>')
-    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong class="md-bold"><em>$1</em></strong>')
+    .replace(/`([^`]+)`/g,           '<code class="md-inline">$1</code>')
+    .replace(/\*\*\*(.+?)\*\*\*/g,   '<strong class="md-bold"><em>$1</em></strong>')
     .replace(/\*\*(.+?)\*\*/g,       '<strong class="md-bold">$1</strong>')
-    .replace(/\*(.+?)\*/g,             '<em>$1</em>');
+    .replace(/\*(.+?)\*/g,           '<em>$1</em>');
 
-  // STEP 5 — block-level elements (line by line)
+  // 5. Block elements
   html = html
     .replace(/^# (.+)$/gm,    (_, t) => `<h1 class="md-h1" id="${slugify(t)}">${t}</h1>`)
     .replace(/^## (.+)$/gm,   (_, t) => `<h2 class="md-h2" id="${slugify(t)}">${t}</h2>`)
@@ -316,87 +256,75 @@ function renderMarkdown(md) {
       return `<table class="md-table"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
     })
     .replace(/^(\d+)\. (.+)$/gm, '<li class="md-li">$2</li>')
-    .replace(/^[-*] (.+)$/gm,      '<li class="md-li">$1</li>');
+    .replace(/^[-*] (.+)$/gm,    '<li class="md-li">$1</li>');
 
-  // STEP 6 — paragraphs: wrap lines that aren't already HTML tags or placeholders
+  // 6. Paragraphs — skip lines starting with < or %% placeholders
   html = html.replace(/^(?!<[a-zA-Z]|%%|$)(.+)$/gm, '<p class="md-p">$1</p>');
   html = html.replace(/\n{3,}/g, "\n\n");
 
-  // STEP 7 — wrap lists
+  // 7. Wrap lists
   html = html.replace(/(<li class="md-li">[\s\S]*?<\/li>\n?)+/g, m => `<ul class="md-ul">${m}</ul>`);
 
-  // STEP 8 — restore code blocks
-  html = html.replace(/%%CODEBLOCK(\d+)%%/g, (_, i) => {
+  // 8. Restore code blocks
+  html = html.replace(/%%CODE(\d+)%%/g, (_, i) => {
     const { lang, code } = blocks[i];
     const safe = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     return `<div class="md-pre"><div class="md-pre-header"><span class="md-lang">${lang}</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div><code class="md-code">${safe}</code></div>`;
   });
 
-  // STEP 9 — restore images as Medium-style blocks
-  //   Strip any <p> wrapper the paragraph regex may have added around %%IMAGEn%%
-  html = html.replace(/<p class="md-p">%%IMAGE(\d+)%%<\/p>/g, "%%IMAGE$1%%");
-
-  let imgCounter = 0;
-  html = html.replace(/%%IMAGE(\d+)%%/g, (_, i) => {
-    imgCounter++;
+  // 9. Restore images — strip any <p> wrapper, render Medium-style
+  html = html.replace(/<p class="md-p">%%IMG(\d+)%%<\/p>/g, "%%IMG$1%%");
+  let imgN = 0;
+  html = html.replace(/%%IMG(\d+)%%/g, (_, i) => {
+    imgN++;
     const { alt, src } = images[parseInt(i)];
-    const caption = (alt && alt !== "screenshot")
-      ? `<div class="md-img-caption"><span class="md-img-num">Fig.${imgCounter}</span>${alt}</div>`
-      : `<div class="md-img-caption"><span class="md-img-num">Fig.${imgCounter}</span>Screenshot</div>`;
-    return `<div class="md-img-wrap"><img src="${src}" alt="${alt}" loading="lazy" onclick="expandImage(this)"/>${caption}</div>`;
+    const cap = (alt && alt !== "screenshot")
+      ? `<div class="md-img-caption"><span class="md-img-num">Fig.${imgN}</span>${alt}</div>`
+      : `<div class="md-img-caption"><span class="md-img-num">Fig.${imgN}</span>Screenshot</div>`;
+    return `<div class="md-img-wrap"><img src="${src}" alt="${alt}" loading="lazy" onclick="expandImage(this)"/>${cap}</div>`;
   });
 
   return html;
 }
 
-/* ── Image lightbox expand on click ── */
+/* ── Lightbox ── */
 function expandImage(img) {
-  const overlay = document.createElement("div");
-  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:2rem;";
-  const clone = document.createElement("img");
-  clone.src = img.src;
-  clone.style.cssText = "max-width:95vw;max-height:92vh;object-fit:contain;border:1px solid #1a3a5a;box-shadow:0 0 60px rgba(0,255,136,0.15);";
-  overlay.appendChild(clone);
-  overlay.onclick = () => overlay.remove();
-  document.body.appendChild(overlay);
+  const ov = document.createElement("div");
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:2rem;";
+  const cl = document.createElement("img");
+  cl.src = img.src;
+  cl.style.cssText = "max-width:95vw;max-height:92vh;object-fit:contain;border:1px solid #1a3a5a;box-shadow:0 0 60px rgba(0,255,136,0.15);";
+  ov.appendChild(cl);
+  ov.onclick = () => ov.remove();
+  document.body.appendChild(ov);
 }
 
 function slugify(t) {
   return t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 }
 
-/* ── Build Table of Contents from headings ── */
+/* ── Table of Contents ── */
 function buildTOC(container) {
   const headings = [...container.querySelectorAll(".md-h2, .md-h3, .md-h4")];
   if (headings.length < 2) return "";
-
   const items = headings.map(h => {
     const cls = h.classList.contains("md-h3") ? "h3" : h.classList.contains("md-h4") ? "h4" : "h2";
     return `<li class="toc-item ${cls}"><a href="#${h.id}">// ${h.textContent}</a></li>`;
   }).join("");
-
-  return `<div class="toc-box">
-    <div class="toc-title">// TABLE OF CONTENTS</div>
-    <ul class="toc-list">${items}</ul>
-  </div>`;
+  return `<div class="toc-box"><div class="toc-title">// TABLE OF CONTENTS</div><ul class="toc-list">${items}</ul></div>`;
 }
 
-/* ── Render full writeup page ── */
+/* ── Render writeup page ── */
 function renderPage(w) {
-  document.title = `${w.title} — 0xH4X`;
-
-  // View count
+  document.title = `${w.title} — Arun1x`;
   document.getElementById("viewCount").textContent = `${w.views || 0} views`;
 
-  const pc = platformClass(w.platform);
-
-  // Build content HTML first (we need it for TOC)
   const contentDiv = document.createElement("div");
   contentDiv.className = "md-content";
   contentDiv.innerHTML = renderMarkdown(w.content || "");
 
-  // TOC
   const toc = buildTOC(contentDiv);
+  const pc  = platformClass(w.platform);
 
   document.getElementById("pageContent").innerHTML = `
     <div class="writeup-header">
@@ -404,18 +332,15 @@ function renderPage(w) {
         <span class="platform-badge platform-${pc}">${w.platform_label}</span>
         <span class="meta-date">${w.date}</span>
         <span class="diff-badge diff-${w.difficulty}">${(w.difficulty||"").toUpperCase()}</span>
-        ${w.category ? `<span class="file-info">📁 ${w.category}</span>` : ""}
+        ${w.category  ? `<span class="file-info">📁 ${w.category}</span>`  : ""}
         ${w.file_name ? `<span class="file-info">📄 ${w.file_name}</span>` : ""}
       </div>
       <h1 class="writeup-title">${w.title}</h1>
       <p class="writeup-excerpt">${w.excerpt}</p>
       <div class="writeup-tags">${(w.tags||[]).map(t=>`<span class="wtag">#${t}</span>`).join(" ")}</div>
     </div>
-
     ${toc}
-
     <div id="mdContent"></div>
-
     <div class="page-footer">
       <span class="footer-brand">[Arun1x] // Stay paranoid. Keep hacking.</span>
       <a href="index.html" class="back-btn">← Back to writeups</a>
@@ -425,7 +350,6 @@ function renderPage(w) {
   document.getElementById("mdContent").appendChild(contentDiv);
 }
 
-/* ── Show error ── */
 function renderError(msg) {
   document.getElementById("pageContent").innerHTML = `
     <div class="state-box">
@@ -435,18 +359,16 @@ function renderError(msg) {
     </div>`;
 }
 
-/* ── Fetch writeup from API ── */
+/* ── Load writeup from API ── */
 async function loadWriteup() {
   const slug = getSlug();
   if (!slug) { renderError("No writeup specified."); return; }
-
   try {
     const res = await fetch(`${API}/api/writeups/${slug}`);
-    if (!res.ok) throw new Error(`${res.status} — writeup not found`);
-    const data = await res.json();
-    renderPage(data);
+    if (!res.ok) throw new Error(`${res.status}`);
+    renderPage(await res.json());
   } catch (err) {
-    renderError(`Could not load writeup: ${err.message}`);
+    renderError(`Could not load writeup (${err.message})`);
   }
 }
 
