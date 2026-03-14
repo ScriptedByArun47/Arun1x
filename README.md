@@ -1,125 +1,83 @@
-# Aru1x — Cybersecurity Portfolio
+# Arun1x — Cybersecurity Portfolio
 
-A full-stack cybersecurity portfolio website with terminal aesthetics, CTF tracking, writeups, and project showcase.
+> TryHackMe Top 2% · Pentesting · OWASP · SOC · Python Security Tools
 
----
-
-## 📁 Structure
-
-```
-cybersec-portfolio/
-├── index.html          ← Main HTML
-├── style.css           ← Full CSS (dark terminal theme)
-├── app.js              ← Frontend JavaScript
-└── backend/
-    ├── main.py         ← FastAPI + MongoDB backend
-    └── requirements.txt
-```
+Live → [arun1x.vercel.app](https://arun1x.vercel.app)
 
 ---
 
-## 🖥️ Frontend
+## Stack
 
-Open `index.html` directly in a browser for the static frontend.
+| Layer | Tech |
+|---|---|
+| Frontend | HTML · CSS · Vanilla JS |
+| Backend | Python · FastAPI |
+| Database | MongoDB Atlas |
+| Image CDN | Cloudinary |
+| Frontend Host | Vercel |
+| Backend Host | Render |
 
-**Tech:** Vanilla HTML/CSS/JS · Share Tech Mono · Rajdhani · Exo 2 (Google Fonts)
+---
 
-**Sections:**
-- Boot screen terminal animation
-- Hero with live terminal simulation + animated counters
-- Projects showcase with hex-clip cards
-- Write-ups with platform filter (TryHackMe, PortSwigger, PicoCTF, Daily)
-- CTF challenges table with difficulty badges
-- Skills with animated progress bars + tools grid
+## Project Structure
+
+```
+website/
+├── backend/
+│   ├── main.py
+│   ├── admin.html
+│   ├── requirements.txt
+│   ├── runtime.txt
+│   └── Procfile
+├── frontend/
+│   ├── index.html
+│   ├── app.js
+│   ├── style.css
+│   └── Writeup.html
+├── .gitignore
+└── README.md
+```
+
+---
+
+## Features
+
+- Terminal boot screen with hacker aesthetic
+- Writeup reader with Cloudinary image rendering
+- CTF challenge tracker
+- Skills & certifications showcase
 - Contact form
+- Admin dashboard for content management
 
 ---
 
-## ⚙️ Backend (FastAPI + MongoDB)
+## Local Development
 
-### 1. Install dependencies
+### Backend
 ```bash
 cd backend
 pip install -r requirements.txt
-```
-
-### 2. Start MongoDB
-```bash
-# Local MongoDB
-mongod --dbpath /data/db
-
-# OR via Docker
-docker run -d -p 27017:27017 --name mongo mongo:latest
-```
-
-### 3. (Optional) Create .env file
-```env
-MONGO_URI=mongodb://localhost:27017
-DB_NAME=portfolio_db
-```
-
-### 4. Run the backend
-```bash
 uvicorn main:app --reload --port 8000
 ```
 
-### 5. API Docs
-Visit: **http://localhost:8000/docs** (Swagger UI auto-generated)
+### Frontend
+```bash
+cd frontend
+python -m http.server 3000
+```
 
 ---
 
+## Deployment
 
+### Backend → Render
+- Root Directory: `backend`
+- Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 
-## 🔌 API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/writeups` | List writeups (filter: `?platform=tryhackme`) |
-| POST | `/api/writeups` | Create writeup |
-| PUT | `/api/writeups/{id}` | Update writeup |
-| DELETE | `/api/writeups/{id}` | Delete writeup |
-| GET | `/api/projects` | List projects |
-| POST | `/api/projects` | Create project |
-| GET | `/api/ctf` | List CTF challenges |
-| POST | `/api/ctf` | Add CTF challenge |
-| GET | `/api/skills` | List skills |
-| POST | `/api/skills` | Add skill |
-| POST | `/api/contact` | Submit contact form |
-| GET | `/api/stats` | Portfolio summary stats |
+### Frontend → Vercel
+- Root Directory: `frontend`
+- Framework: `Other`
 
 ---
 
-## 🚀 Deployment Tips
-
-- **Frontend:** Deploy to Netlify / Vercel / GitHub Pages
-- **Backend:** Deploy to Railway / Render / VPS  
-- **MongoDB:** Use MongoDB Atlas free tier for cloud DB
-- Update `MONGO_URI` env var on your hosting platform
-- Update fetch URL in `app.js` from `/api/contact` to your backend URL
-
----
-
-## 🎨 Customization
-
-Edit `app.js` to update:
-- `PROJECTS` array — your real projects
-- `WRITEUPS` array — your real writeups (or fetch from `/api/writeups`)
-- `CTF_CHALLENGES` — your real CTF list
-- `OFFENSIVE_SKILLS` / `WEB_SKILLS` — your skill levels (0–100)
-
----
-👨‍💻 Author
-
-Arun Kumar
-
-Cybersecurity Enthusiast
-Web Penetration Testing · CTF Player
-
-⭐ Support
-
-If you find this project useful:
-
-⭐ Star the repository
-🐛 Report issues
-🔧 Submit improvements
-
+*Built by [ArunKumar L](https://github.com/ScriptedByArun47) · Stay paranoid. Keep hacking.*
