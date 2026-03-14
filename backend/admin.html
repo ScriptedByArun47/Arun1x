@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Arun1x — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#030810;--bg2:#060f1a;--bg3:#0a1625;
+  --accent:#00ff88;--accent2:#00cfff;--accent3:#ff4444;--accent4:#ffaa00;
+  --text:#c8d8e8;--dim:#5a7a9a;--border:#1a3a5a;
+  --mono:'Share Tech Mono',monospace;--head:'Rajdhani',sans-serif;
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--mono)}
+
+/* ── LOGIN ── */
+#loginScreen{
+  position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+.login-box{width:380px;padding:2.5rem;background:var(--bg2);border:1px solid var(--border)}
+.login-logo{font-family:var(--head);font-size:2rem;color:var(--accent);text-align:center;
+  margin-bottom:0.4rem;letter-spacing:0.1em}
+.login-sub{text-align:center;font-size:0.75rem;color:var(--dim);margin-bottom:2rem}
+.login-label{font-size:0.7rem;color:var(--accent2);letter-spacing:0.15em;display:block;margin-bottom:0.4rem}
+.login-input{
+  width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  font-family:var(--mono);font-size:0.85rem;padding:0.75rem 1rem;outline:none;margin-bottom:1.2rem
+}
+.login-input:focus{border-color:var(--accent)}
+.login-btn{
+  width:100%;padding:0.8rem;background:var(--accent);color:var(--bg);border:none;
+  font-family:var(--mono);font-size:0.9rem;font-weight:700;letter-spacing:0.15em;cursor:pointer
+}
+.login-btn:hover{background:#fff}
+#loginErr{font-size:0.75rem;color:var(--accent3);min-height:1.2rem;margin-top:0.75rem;text-align:center}
+
+/* ── LAYOUT ── */
+#app{display:none;min-height:100vh}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:1rem;padding:0.8rem 2rem;
+  background:rgba(3,8,16,0.97);border-bottom:1px solid var(--border);
+}
+.topbar-brand{font-family:var(--head);color:var(--accent);font-size:1.1rem;letter-spacing:0.1em}
+.topbar-status{font-size:0.65rem;color:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.logout-btn{
+  margin-left:auto;font-family:var(--mono);font-size:0.7rem;
+  background:transparent;border:1px solid var(--border);color:var(--dim);
+  padding:0.3rem 0.8rem;cursor:pointer;transition:all .2s
+}
+.logout-btn:hover{border-color:var(--accent3);color:var(--accent3)}
+
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2)}
+.tab{
+  font-family:var(--mono);font-size:0.78rem;letter-spacing:0.1em;
+  padding:0.9rem 1.5rem;cursor:pointer;color:var(--dim);
+  border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none
+}
+.tab.active,.tab:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+.panel{display:none;padding:2rem;max-width:1000px;margin:0 auto}
+.panel.active{display:block}
+
+/* ── CARDS / FORMS ── */
+h2{font-family:var(--head);font-size:1.3rem;color:var(--text);margin-bottom:1.5rem;
+  padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.form-grid.single{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:0.4rem}
+.fl{font-size:0.68rem;color:var(--accent2);letter-spacing:0.15em}
+.fi{
+  background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  font-family:var(--mono);font-size:0.82rem;padding:0.65rem 0.9rem;outline:none
+}
+.fi:focus{border-color:var(--accent)}
+select.fi option{background:var(--bg3)}
+textarea.fi{min-height:80px;resize:vertical}
+.btn{
+  font-family:var(--mono);font-size:0.78rem;letter-spacing:0.1em;
+  padding:0.65rem 1.5rem;border:none;cursor:pointer;transition:all .2s
+}
+.btn-green{background:var(--accent);color:var(--bg);font-weight:700}
+.btn-green:hover{background:#fff}
+.btn-red{background:transparent;border:1px solid var(--accent3);color:var(--accent3)}
+.btn-red:hover{background:var(--accent3);color:#000}
+.btn-blue{background:transparent;border:1px solid var(--accent2);color:var(--accent2)}
+.btn-blue:hover{background:var(--accent2);color:#000}
+.status-msg{font-size:0.78rem;min-height:1.5rem;margin-top:0.75rem;padding:0.4rem 0}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;margin-top:1.5rem}
+table{width:100%;border-collapse:collapse;font-size:0.78rem}
+th{padding:0.6rem 1rem;text-align:left;color:var(--accent2);font-size:0.68rem;
+  letter-spacing:0.12em;border-bottom:2px solid var(--accent)}
+td{padding:0.7rem 1rem;border-bottom:1px solid var(--border);color:var(--text)}
+tr:hover td{background:rgba(0,255,136,.03)}
+.badge{font-size:0.6rem;letter-spacing:.1em;padding:.2rem .5rem}
+.badge-thm{background:rgba(255,68,68,.15);color:#ff4444;border:1px solid rgba(255,68,68,.3)}
+.badge-ps {background:rgba(255,170,0,.15);color:#ffaa00;border:1px solid rgba(255,170,0,.3)}
+.badge-pico{background:rgba(0,207,255,.15);color:#00cfff;border:1px solid rgba(0,207,255,.3)}
+.badge-daily{background:rgba(0,255,136,.15);color:#00ff88;border:1px solid rgba(0,255,136,.3)}
+.badge-easy{background:rgba(0,255,136,.1);color:#00ff88;border:1px solid rgba(0,255,136,.3)}
+.badge-medium{background:rgba(255,170,0,.1);color:#ffaa00;border:1px solid rgba(255,170,0,.3)}
+.badge-hard{background:rgba(255,68,68,.1);color:#ff4444;border:1px solid rgba(255,68,68,.3)}
+.badge-solved{background:rgba(0,255,136,.1);color:#00ff88}
+.badge-progress{background:rgba(255,170,0,.1);color:#ffaa00}
+
+/* ── FILE UPLOAD ── */
+.file-zone{
+  border:2px dashed var(--border);padding:2rem;text-align:center;
+  cursor:pointer;transition:all .2s;margin-bottom:1rem
+}
+.file-zone:hover,.file-zone.drag{border-color:var(--accent);background:rgba(0,255,136,.03)}
+.file-zone input{display:none}
+.file-name{font-size:0.75rem;color:var(--accent4);margin-top:0.5rem}
+
+/* ── MESSAGES ── */
+.msg-card{
+  background:var(--bg2);border:1px solid var(--border);padding:1.2rem;
+  margin-bottom:1rem;border-left:3px solid var(--accent2)
+}
+.msg-card.unread{border-left-color:var(--accent)}
+.msg-meta{font-size:0.7rem;color:var(--dim);margin-bottom:0.5rem;display:flex;gap:1rem;flex-wrap:wrap}
+.msg-name{color:var(--accent);font-size:0.85rem;margin-bottom:0.3rem}
+.msg-body{font-size:0.82rem;color:var(--text);line-height:1.7}
+
+/* ── STATS CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--bg2);border:1px solid var(--border);padding:1.5rem;text-align:center}
+.stat-n{font-size:2.5rem;color:var(--accent);font-weight:700;text-shadow:0 0 20px #00ff8840}
+.stat-l{font-size:0.65rem;color:var(--dim);letter-spacing:.15em;margin-top:.3rem}
+
+.spinner-sm{
+  display:inline-block;width:14px;height:14px;border:2px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:700px){
+  .form-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .panel{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">[ Arun1x ]</div>
+    <div class="login-sub">// Admin Panel — Authorised Access Only</div>
+    <label class="login-label">// ADMIN KEY</label>
+    <input class="login-input" type="password" id="keyInput" placeholder="Enter your ADMIN_API_KEY" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">AUTHENTICATE →</button>
+    <div id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+  <div class="topbar">
+    <span class="topbar-brand">[ Arun1x Admin ]</span>
+    <span class="topbar-status">● CONNECTED</span>
+    <button class="logout-btn" onclick="doLogout()">LOGOUT</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('dashboard')">DASHBOARD</button>
+    <button class="tab" onclick="switchTab('writeups')">WRITEUPS</button>
+    <button class="tab" onclick="switchTab('projects')">PROJECTS</button>
+    <button class="tab" onclick="switchTab('ctf')">CTF</button>
+    <button class="tab" onclick="switchTab('messages')">MESSAGES</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="tab-dashboard">
+    <h2>DASHBOARD</h2>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-n" id="s-writeups">—</div><div class="stat-l">WRITEUPS</div></div>
+      <div class="stat-card"><div class="stat-n" id="s-projects">—</div><div class="stat-l">PROJECTS</div></div>
+      <div class="stat-card"><div class="stat-n" id="s-ctf">—</div><div class="stat-l">CTF SOLVED</div></div>
+      <div class="stat-card"><div class="stat-n" id="s-msgs">—</div><div class="stat-l">MESSAGES</div></div>
+    </div>
+    <p style="font-size:.8rem;color:var(--dim)">// Use the tabs above to manage your portfolio content. All changes are live immediately.</p>
+  </div>
+
+  <!-- WRITEUPS -->
+  <div class="panel" id="tab-writeups">
+    <h2>UPLOAD WRITEUP</h2>
+    <div class="file-zone" id="dropZone" onclick="document.getElementById('wFile').click()">
+      <div>📄 Click or drag &amp; drop your <strong>.docx / .md / .txt</strong> file</div>
+      <div class="file-name" id="wFileName">No file selected</div>
+      <input type="file" id="wFile" accept=".docx,.md,.txt" onchange="fileChosen(this)"/>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label class="fl">// TITLE</label><input class="fi" id="wTitle" placeholder="ConvertMyVideo — RCE to Root"/></div>
+      <div class="form-group"><label class="fl">// PLATFORM</label>
+        <select class="fi" id="wPlatform" onchange="syncLabel()">
+          <option value="tryhackme">tryhackme</option>
+          <option value="portswigger">portswigger</option>
+          <option value="picoctf">picoctf</option>
+          <option value="daily">daily</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="fl">// PLATFORM LABEL</label><input class="fi" id="wLabel" placeholder="TryHackMe"/></div>
+      <div class="form-group"><label class="fl">// DIFFICULTY</label>
+        <select class="fi" id="wDiff">
+          <option value="easy">easy</option>
+          <option value="medium" selected>medium</option>
+          <option value="hard">hard</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="fl">// CATEGORY</label><input class="fi" id="wCat" placeholder="Web / Command Injection"/></div>
+      <div class="form-group"><label class="fl">// TAGS (comma separated)</label><input class="fi" id="wTags" placeholder="rce,privesc,linux"/></div>
+    </div>
+    <div class="form-grid single">
+      <div class="form-group"><label class="fl">// EXCERPT</label><textarea class="fi" id="wExcerpt" placeholder="Short description shown on the card..."></textarea></div>
+    </div>
+    <button class="btn btn-green" onclick="uploadWriteup()">UPLOAD WRITEUP ↑</button>
+    <div class="status-msg" id="wStatus"></div>
+
+    <h2 style="margin-top:2.5rem">ALL WRITEUPS</h2>
+    <button class="btn btn-blue" onclick="loadWriteups()" style="margin-bottom:1rem">REFRESH</button>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>TITLE</th><th>PLATFORM</th><th>DIFFICULTY</th><th>DATE</th><th>VIEWS</th><th>ACTION</th></tr></thead>
+      <tbody id="wTable"></tbody></table>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="panel" id="tab-projects">
+    <h2>ADD PROJECT</h2>
+    <div class="form-grid">
+      <div class="form-group"><label class="fl">// TITLE</label><input class="fi" id="pTitle" placeholder="PENTURION"/></div>
+      <div class="form-group"><label class="fl">// TAG</label><input class="fi" id="pTag" placeholder="FRAMEWORK // PENTESTING"/></div>
+      <div class="form-group"><label class="fl">// GITHUB URL</label><input class="fi" id="pGithub" placeholder="https://github.com/..."/></div>
+      <div class="form-group"><label class="fl">// DEMO URL</label><input class="fi" id="pDemo" placeholder="#"/></div>
+      <div class="form-group"><label class="fl">// STACK (comma separated)</label><input class="fi" id="pStack" placeholder="Python, Bash, Nmap"/></div>
+    </div>
+    <div class="form-grid single">
+      <div class="form-group"><label class="fl">// DESCRIPTION</label><textarea class="fi" id="pDesc" placeholder="What does this project do?"></textarea></div>
+    </div>
+    <button class="btn btn-green" onclick="addProject()">ADD PROJECT +</button>
+    <div class="status-msg" id="pStatus"></div>
+
+    <h2 style="margin-top:2.5rem">ALL PROJECTS</h2>
+    <button class="btn btn-blue" onclick="loadProjects()" style="margin-bottom:1rem">REFRESH</button>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>TITLE</th><th>TAG</th><th>STACK</th><th>ACTION</th></tr></thead>
+      <tbody id="pTable"></tbody></table>
+    </div>
+  </div>
+
+  <!-- CTF -->
+  <div class="panel" id="tab-ctf">
+    <h2>ADD CTF CHALLENGE</h2>
+    <div class="form-grid">
+      <div class="form-group"><label class="fl">// CHALLENGE NAME</label><input class="fi" id="cName" placeholder="Mr. Robot"/></div>
+      <div class="form-group"><label class="fl">// PLATFORM</label>
+        <select class="fi" id="cPlatform">
+          <option>TryHackMe</option><option>PortSwigger</option>
+          <option>PicoCTF</option><option>HackTheBox</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="fl">// CATEGORY</label><input class="fi" id="cCat" placeholder="Web / PrivEsc"/></div>
+      <div class="form-group"><label class="fl">// DIFFICULTY</label>
+        <select class="fi" id="cDiff">
+          <option value="easy">easy</option>
+          <option value="medium" selected>medium</option>
+          <option value="hard">hard</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="fl">// STATUS</label>
+        <select class="fi" id="cStatus">
+          <option value="solved">solved</option>
+          <option value="progress">in progress</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="fl">// WRITEUP SLUG (optional)</label><input class="fi" id="cSlug" placeholder="mr-robot"/></div>
+    </div>
+    <button class="btn btn-green" onclick="addCTF()">ADD CHALLENGE +</button>
+    <div class="status-msg" id="cStatus2"></div>
+
+    <h2 style="margin-top:2.5rem">ALL CTF CHALLENGES</h2>
+    <button class="btn btn-blue" onclick="loadCTF()" style="margin-bottom:1rem">REFRESH</button>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>NAME</th><th>PLATFORM</th><th>CATEGORY</th><th>DIFFICULTY</th><th>STATUS</th><th>ACTION</th></tr></thead>
+      <tbody id="cTable"></tbody></table>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="panel" id="tab-messages">
+    <h2>CONTACT MESSAGES</h2>
+    <button class="btn btn-blue" onclick="loadMessages()" style="margin-bottom:1.5rem">REFRESH</button>
+    <div id="msgList"></div>
+  </div>
+</div>
+
+<script>
+// ── Config ─────────────────────────────────────────────────────
+// Change this to your Render backend URL
+const API = window.location.origin;   // admin.html is served FROM the backend, so same origin
+
+let KEY = "";
+
+// ── Auth ───────────────────────────────────────────────────────
+function doLogin() {
+  const k = document.getElementById("keyInput").value.trim();
+  if (!k) { setErr("Enter your API key."); return; }
+  KEY = k;
+  // Quick test call
+  fetch(`${API}/api/stats`, { headers: { "X-Admin-Key": KEY } })
+    .then(r => {
+      if (r.status === 403) { setErr("// Wrong key — access denied."); KEY = ""; return; }
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      loadDashboard();
+    })
+    .catch(() => setErr("// Cannot reach API."));
+}
+
+function doLogout() {
+  KEY = "";
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("app").style.display = "none";
+  document.getElementById("keyInput").value = "";
+}
+
+function setErr(msg) { document.getElementById("loginErr").textContent = msg; }
+
+// ── Tabs ───────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", t.textContent.toLowerCase().includes(name)));
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById(`tab-${name}`).classList.add("active");
+  if (name === "dashboard")  loadDashboard();
+  if (name === "writeups")   loadWriteups();
+  if (name === "projects")   loadProjects();
+  if (name === "ctf")        loadCTF();
+  if (name === "messages")   loadMessages();
+}
+
+// ── API helpers ────────────────────────────────────────────────
+async function api(path, opts={}) {
+  const res = await fetch(`${API}${path}`, {
+    ...opts,
+    headers: { "X-Admin-Key": KEY, ...(opts.headers||{}) }
+  });
+  return res;
+}
+
+function status(id, msg, ok=true) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.color = ok ? "var(--accent)" : "var(--accent3)";
+}
+
+// ── Dashboard ─────────────────────────────────────────────────
+async function loadDashboard() {
+  const r = await fetch(`${API}/api/stats`);
+  const d = await r.json();
+  document.getElementById("s-writeups").textContent = d.writeups;
+  document.getElementById("s-projects").textContent = d.projects;
+  document.getElementById("s-ctf").textContent      = d.ctf_solved;
+  // messages count
+  const mr = await api("/api/admin/messages");
+  if (mr.ok) {
+    const md = await mr.json();
+    document.getElementById("s-msgs").textContent = md.total;
+  }
+}
+
+// ── Writeups ──────────────────────────────────────────────────
+function syncLabel() {
+  const map = { tryhackme:"TryHackMe", portswigger:"PortSwigger", picoctf:"PicoCTF", daily:"Daily" };
+  document.getElementById("wLabel").value = map[document.getElementById("wPlatform").value] || "";
+}
+
+function fileChosen(inp) {
+  document.getElementById("wFileName").textContent = inp.files[0]?.name || "No file";
+}
+
+// Drag & drop
+const dz = document.getElementById("dropZone");
+dz.addEventListener("dragover", e => { e.preventDefault(); dz.classList.add("drag"); });
+dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
+dz.addEventListener("drop", e => {
+  e.preventDefault(); dz.classList.remove("drag");
+  const f = e.dataTransfer.files[0];
+  if (f) { document.getElementById("wFile").files = e.dataTransfer.files; document.getElementById("wFileName").textContent = f.name; }
+});
+
+async function uploadWriteup() {
+  const file = document.getElementById("wFile").files[0];
+  if (!file)  { status("wStatus","// No file selected.",false); return; }
+  const title = document.getElementById("wTitle").value.trim();
+  if (!title) { status("wStatus","// Title required.",false); return; }
+
+  status("wStatus","// Uploading... ⏳");
+  const fd = new FormData();
+  fd.append("file",           file);
+  fd.append("title",          title);
+  fd.append("platform",       document.getElementById("wPlatform").value);
+  fd.append("platform_label", document.getElementById("wLabel").value);
+  fd.append("difficulty",     document.getElementById("wDiff").value);
+  fd.append("category",       document.getElementById("wCat").value);
+  fd.append("tags",           document.getElementById("wTags").value);
+  fd.append("excerpt",        document.getElementById("wExcerpt").value);
+
+  try {
+    const r = await api("/api/admin/writeups/upload", { method:"POST", body:fd });
+    const d = await r.json();
+    if (r.ok) {
+      status("wStatus", `// ✓ Uploaded — slug: ${d.slug} | ${d.image_count} image(s)`);
+      loadWriteups();
+    } else {
+      status("wStatus", `// Error: ${d.detail}`, false);
+    }
+  } catch(e) { status("wStatus","// Network error",false); }
+}
+
+async function loadWriteups() {
+  const r = await fetch(`${API}/api/writeups`);
+  const d = await r.json();
+  const tb = document.getElementById("wTable");
+  if (!d.writeups.length) { tb.innerHTML = `<tr><td colspan="6" style="color:var(--dim)">// No writeups yet</td></tr>`; return; }
+  const pc = p => p==="tryhackme"?"thm":p==="portswigger"?"ps":p==="picoctf"?"pico":"daily";
+  tb.innerHTML = d.writeups.map(w => `
+    <tr>
+      <td>${w.title}</td>
+      <td><span class="badge badge-${pc(w.platform)}">${w.platform_label}</span></td>
+      <td><span class="badge badge-${w.difficulty}">${w.difficulty}</span></td>
+      <td>${w.date}</td>
+      <td>${w.views||0}</td>
+      <td><button class="btn btn-red" style="padding:.3rem .7rem;font-size:.65rem" onclick="delWriteup('${w.slug}')">DELETE</button></td>
+    </tr>`).join("");
+}
+
+async function delWriteup(slug) {
+  if (!confirm(`Delete writeup "${slug}"?`)) return;
+  const r = await api(`/api/admin/writeups/${slug}`, { method:"DELETE" });
+  if (r.ok) { status("wStatus","// Deleted ✓"); loadWriteups(); }
+  else       status("wStatus","// Delete failed",false);
+}
+
+// ── Projects ──────────────────────────────────────────────────
+async function addProject() {
+  const title = document.getElementById("pTitle").value.trim();
+  if (!title) { status("pStatus","// Title required.",false); return; }
+  const data = {
+    title,
+    tag:         document.getElementById("pTag").value.trim(),
+    description: document.getElementById("pDesc").value.trim(),
+    stack:       document.getElementById("pStack").value.split(",").map(s=>s.trim()).filter(Boolean),
+    github_url:  document.getElementById("pGithub").value.trim(),
+    demo_url:    document.getElementById("pDemo").value.trim(),
+  };
+  const r = await api("/api/admin/projects", {
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)
+  });
+  const d = await r.json();
+  if (r.ok) { status("pStatus",`// Added ✓ id=${d.id}`); loadProjects(); }
+  else       status("pStatus",`// ${d.detail}`,false);
+}
+
+async function loadProjects() {
+  const r = await fetch(`${API}/api/projects`);
+  const d = await r.json();
+  const tb = document.getElementById("pTable");
+  if (!d.projects.length) { tb.innerHTML=`<tr><td colspan="4" style="color:var(--dim)">// No projects</td></tr>`; return; }
+  tb.innerHTML = d.projects.map(p=>`
+    <tr>
+      <td>${p.title}</td>
+      <td style="color:var(--accent2);font-size:.7rem">${p.tag||""}</td>
+      <td style="font-size:.7rem;color:var(--dim)">${(p.stack||[]).join(", ")}</td>
+      <td><button class="btn btn-red" style="padding:.3rem .7rem;font-size:.65rem" onclick="delProject('${p._id}')">DELETE</button></td>
+    </tr>`).join("");
+}
+
+async function delProject(id) {
+  if (!confirm("Delete this project?")) return;
+  const r = await api(`/api/admin/projects/${id}`,{method:"DELETE"});
+  if (r.ok) { status("pStatus","// Deleted ✓"); loadProjects(); }
+  else       status("pStatus","// Failed",false);
+}
+
+// ── CTF ───────────────────────────────────────────────────────
+async function addCTF() {
+  const name = document.getElementById("cName").value.trim();
+  if (!name) { status("cStatus2","// Name required.",false); return; }
+  const data = {
+    name,
+    platform:    document.getElementById("cPlatform").value,
+    category:    document.getElementById("cCat").value.trim(),
+    difficulty:  document.getElementById("cDiff").value,
+    status:      document.getElementById("cStatus").value,
+    writeup_slug:document.getElementById("cSlug").value.trim() || null,
+  };
+  const r = await api("/api/admin/ctf",{
+    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)
+  });
+  const d = await r.json();
+  if (r.ok) { status("cStatus2",`// Added ✓`); loadCTF(); }
+  else       status("cStatus2",`// ${d.detail}`,false);
+}
+
+async function loadCTF() {
+  const r = await fetch(`${API}/api/ctf`);
+  const d = await r.json();
+  const tb = document.getElementById("cTable");
+  if (!d.challenges.length) { tb.innerHTML=`<tr><td colspan="6" style="color:var(--dim)">// No challenges</td></tr>`; return; }
+  tb.innerHTML = d.challenges.map(c=>`
+    <tr>
+      <td>${c.name}</td>
+      <td>${c.platform}</td>
+      <td style="color:var(--accent2)">${c.category}</td>
+      <td><span class="badge badge-${c.difficulty}">${c.difficulty}</span></td>
+      <td><span class="badge badge-${c.status}">${c.status==="solved"?"✓ SOLVED":"⟳ IN PROGRESS"}</span></td>
+      <td><button class="btn btn-red" style="padding:.3rem .7rem;font-size:.65rem" onclick="delCTF('${c._id}')">DELETE</button></td>
+    </tr>`).join("");
+}
+
+async function delCTF(id) {
+  if (!confirm("Delete this challenge?")) return;
+  const r = await api(`/api/admin/ctf/${id}`,{method:"DELETE"});
+  if (r.ok) { loadCTF(); }
+}
+
+// ── Messages ─────────────────────────────────────────────────
+async function loadMessages() {
+  const r = await api("/api/admin/messages");
+  const d = await r.json();
+  const el = document.getElementById("msgList");
+  if (!d.messages.length) { el.innerHTML=`<div style="color:var(--dim);font-size:.85rem">// No messages yet</div>`; return; }
+  el.innerHTML = d.messages.map(m=>`
+    <div class="msg-card ${m.read?'':'unread'}">
+      <div class="msg-name">${m.name} <span style="color:var(--dim);font-size:.7rem">&lt;${m.email}&gt;</span></div>
+      <div class="msg-meta">
+        <span>${new Date(m.received_at).toLocaleString()}</span>
+        <span style="color:${m.read?'var(--dim)':'var(--accent)'}">${m.read?"READ":"● UNREAD"}</span>
+        ${!m.read?`<button class="btn btn-blue" style="padding:.15rem .6rem;font-size:.6rem" onclick="markRead('${m._id}',this)">MARK READ</button>`:""}
+      </div>
+      <div class="msg-body">${m.message}</div>
+    </div>`).join("");
+}
+
+async function markRead(id, btn) {
+  await api(`/api/admin/messages/${id}/read`,{method:"PATCH"});
+  loadMessages();
+}
+
+// ── Sync label on load ────────────────────────────────────────
+syncLabel();
+</script>
+</body>
+</html>

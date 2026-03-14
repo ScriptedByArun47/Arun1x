@@ -4,7 +4,7 @@
    DEPLOYMENT CONFIG — change API_BASE to your deployed backend URL
    e.g. "https://arun1x-api.onrender.com"  or  "https://api.yourdomain.com"
    ============================================================ */
-const API_BASE = "https://YOUR_BACKEND_URL_HERE";   // ← change this before deploying
+const API_BASE = "https://arun1x-backend.onrender.com";
 
 /* ============================================================
    PROJECTS — edit to add / update your own
@@ -15,7 +15,7 @@ const PROJECTS = [
     title:  "PENTURION",
     desc:   "Automated web pentesting framework (in development). Chains reconnaissance, enumeration, vulnerability scanning and exploitation workflows into a modular pipeline.",
     stack:  ["Python", "Bash", "Nmap", "Gobuster", "SQLmap", "Metasploit"],
-    github: "https://github.com/ArunKumarL",
+    github: "https://github.com/ScriptedByArun47/Penturion.git",
     demo:   "#",
   },
   {
@@ -23,7 +23,7 @@ const PROJECTS = [
     title:  "Adaptive Weather Monitor",
     desc:   "Real-time weather application with adaptive UI themes, ambient audio, and animated transitions. Integrates OpenWeather API for live geolocation, temperature, and atmospheric data.",
     stack:  ["Python", "KivyMD", "OpenWeather API"],
-    github: "https://github.com/ArunKumarL",
+    github: "https://github.com/ScriptedByArun47/WeatherApp2.0.git",
     demo:   "#",
   },
   {
@@ -31,7 +31,7 @@ const PROJECTS = [
     title:  "Advanced Reverse Shell",
     desc:   "Controlled reverse shell for penetration testing — supports remote command execution, secure file transfer, privilege checks, and persistence mechanisms.",
     stack:  ["Python", "TCP Networking", "Windows", "Linux"],
-    github: "https://github.com/ArunKumarL",
+    github: "https://github.com/ScriptedByArun47/Silent_SHELL.git",
     demo:   "#",
   },
   {
@@ -39,7 +39,7 @@ const PROJECTS = [
     title:  "Cybersecurity Portfolio",
     desc:   "This site. Full-stack portfolio with FastAPI backend, MongoDB storage, Cloudinary image CDN, file upload for walkthroughs, CTF tracker, and writeup reader.",
     stack:  ["HTML", "CSS", "JS", "FastAPI", "MongoDB", "Cloudinary"],
-    github: "https://github.com/ArunKumarL",
+    github: "https://github.com/ScriptedByArun47/Arun1x.git",
     demo:   "#",
   },
 ];
@@ -118,7 +118,7 @@ async function runBoot() {
    ============================================================ */
 const terminalLines = [
   { text:"kali@Arun1x:~$ whoami",                                        delay:200, color:"#00ff88" },
-  { text:"ArunKumar L — Cybersecurity Intern | B.Tech IT",               delay:400 },
+  { text:"ArunKumar L — Aspiring Cybersecurity Engineer  | B.Tech IT",               delay:400 },
   { text:"kali@Arun1x:~$ cat skills.txt",                                delay:800, color:"#00ff88" },
   { text:"► Reconnaissance, Enumeration, Exploitation",                  delay:300 },
   { text:"► OWASP Top 10 · Burp Suite · Metasploit",                     delay:200 },
@@ -127,7 +127,7 @@ const terminalLines = [
   { text:"kali@Arun1x:~$ ls projects/",                                  delay:800, color:"#00ff88" },
   { text:"PENTURION/  reverse-shell/  weather-app/",                     delay:300, color:"#00cfff" },
   { text:"kali@Arun1x:~$ cat target.txt",                                delay:700, color:"#00ff88" },
-  { text:"Target: Cybersecurity Intern / SOC Analyst Intern",            delay:300, color:"#ffaa00" },
+  { text:"Target: Cybersecurity Intern / Penetration Tester Intern",            delay:300, color:"#ffaa00" },
   { text:"kali@Arun1x:~$ █",                                             delay:600, color:"#00ff88" },
 ];
 
@@ -322,6 +322,19 @@ document.querySelectorAll("section[id]").forEach(s => navObserver.observe(s));
    ============================================================ */
 document.getElementById("navToggle").addEventListener("click", () => {
   document.querySelector(".nav-links").classList.toggle("open");
+});
+
+/* Smooth scroll for nav links without # */
+document.querySelectorAll(".nav-link, .btn-primary, .btn-secondary").forEach(link => {
+  link.addEventListener("click", e => {
+    const href = link.getAttribute("href");
+    const section = document.getElementById(href);
+    if (section) {
+      e.preventDefault();
+      section.scrollIntoView({ behavior: "smooth" });
+      document.querySelector(".nav-links").classList.remove("open");
+    }
+  });
 });
 
 /* ============================================================
