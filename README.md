@@ -1,4 +1,4 @@
-# 0xH4X — Cybersecurity Portfolio
+# Aru1x — Cybersecurity Portfolio
 
 A full-stack cybersecurity portfolio website with terminal aesthetics, CTF tracking, writeups, and project showcase.
 
