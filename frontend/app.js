@@ -4,7 +4,7 @@
    DEPLOYMENT CONFIG — change API_BASE to your deployed backend URL
    e.g. "https://arun1x-api.onrender.com"  or  "https://api.yourdomain.com"
    ============================================================ */
-const API_BASE = "https://arun1x-backend.onrender.com";
+const API_BASE = "https://arun1x-1.onrender.com";
 
 /* ============================================================
    PROJECTS — edit to add / update your own
