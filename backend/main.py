@@ -396,54 +396,62 @@ def html_to_markdown(html_str: str, slug: str) -> str:
     """Convert HTML string to Markdown. Uploads images to Cloudinary."""
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(html_str, "html.parser")
-    lines = []
-    img_counter = [0]
+
+    # Use mutable container so nested function can safely append
+    state = {"lines": [], "img_counter": 0}
 
     def process(tag):
         name = getattr(tag, "name", None)
         if name is None:
             t = str(tag).strip()
-            if t: lines.append(t)
+            if t: state["lines"].append(t)
             return
-        if name in ("script","style","nav","footer","button"): return
-        if name == "h1": lines += [f"# {tag.get_text(strip=True)}", ""]
-        elif name == "h2": lines += [f"## {tag.get_text(strip=True)}", ""]
-        elif name == "h3": lines += [f"### {tag.get_text(strip=True)}", ""]
-        elif name == "h4": lines += [f"#### {tag.get_text(strip=True)}", ""]
+        if name in ("script","style","nav","footer","button","form"): return
+        if name == "h1":
+            state["lines"] += [f"# {tag.get_text(strip=True)}", ""]
+        elif name == "h2":
+            state["lines"] += [f"## {tag.get_text(strip=True)}", ""]
+        elif name == "h3":
+            state["lines"] += [f"### {tag.get_text(strip=True)}", ""]
+        elif name == "h4":
+            state["lines"] += [f"#### {tag.get_text(strip=True)}", ""]
         elif name == "p":
             t = tag.get_text(strip=True)
-            if t: lines += [t, ""]
+            if t: state["lines"] += [t, ""]
         elif name in ("pre", "code"):
-            lines += [f"```\n{tag.get_text()}\n```", ""]
+            state["lines"] += [f"```\n{tag.get_text()}\n```", ""]
         elif name == "blockquote":
-            lines += [f"> {tag.get_text(strip=True)}", ""]
-        elif name == "hr": lines += ["---", ""]
-        elif name in ("ul","ol"):
+            state["lines"] += [f"> {tag.get_text(strip=True)}", ""]
+        elif name == "hr":
+            state["lines"] += ["---", ""]
+        elif name in ("ul", "ol"):
             for li in tag.find_all("li", recursive=False):
-                lines.append(f"- {li.get_text(strip=True)}")
-            lines.append("")
+                state["lines"].append(f"- {li.get_text(strip=True)}")
+            state["lines"].append("")
         elif name == "img":
-            src = tag.get("src","") or tag.get("data-src","")
-            alt = tag.get("alt","screenshot")
+            src = tag.get("src", "") or tag.get("data-src", "")
+            alt = tag.get("alt", "screenshot")
             if src and src.startswith("http"):
-                img_counter[0] += 1
+                state["img_counter"] += 1
                 try:
-                    req = urllib.request.Request(src, headers={"User-Agent":"Mozilla/5.0"})
+                    req = urllib.request.Request(src, headers={"User-Agent": "Mozilla/5.0"})
                     img_bytes = urllib.request.urlopen(req, timeout=10).read()
                     ext = src.split(".")[-1].split("?")[0][:4] or "jpg"
-                    cdn_url = cdn_upload(img_bytes, ext, slug, f"img_{img_counter[0]}")
-                    lines += [f"![{alt}]({cdn_url})", ""]
+                    cdn_url = cdn_upload(img_bytes, ext, slug, f"img_{state['img_counter']}")
+                    state["lines"] += [f"![{alt}]({cdn_url})", ""]
                     return
                 except Exception as e:
                     print(f"  [img] skip: {e}")
-                lines += [f"![{alt}]({src})", ""]
+                state["lines"] += [f"![{alt}]({src})", ""]
         else:
             for child in tag.children:
                 process(child)
 
-    for child in soup.body.children if soup.body else soup.children:
+    root = soup.body if soup.body else soup
+    for child in root.children:
         process(child)
-    return "\n".join(lines).strip()
+
+    return "\n".join(state["lines"]).strip()
 
 class MediumRSSIn(BaseModel):
     medium_url:     str            # article URL OR @username profile URL
