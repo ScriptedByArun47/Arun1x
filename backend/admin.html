@@ -298,19 +298,16 @@ tr:hover td{background:rgba(0,255,136,.03)}
 
   <!-- IMPORT FROM URL -->
   <div class="panel" id="tab-import">
-    <h2>ADD EXTERNAL LINK (Medium / Blog)</h2>
-    <p style="font-size:.8rem;color:var(--dim);margin-bottom:1.5rem">// Paste any article URL — it will show inside your site in an iframe. No content extraction needed.</p>
+    <h2>IMPORT FROM MEDIUM (RSS)</h2>
+    <p style="font-size:.8rem;color:var(--dim);margin-bottom:0.5rem">// Paste your Medium article URL — content is fetched via RSS feed (no scraping, always works).</p>
+    <p style="font-size:.75rem;color:var(--accent4);margin-bottom:1.5rem">✓ Title, content, images and tags are auto-extracted. Article displays on your site like any other writeup.</p>
 
     <div class="form-grid single">
       <div class="form-group"><label class="fl">// ARTICLE URL</label>
-        <input class="fi" id="iUrl" placeholder="https://medium.com/@user/article-title-xxxx"/>
+        <input class="fi" id="iUrl" placeholder="https://medium.com/@arun1x/article-title-xxxx"/>
       </div>
     </div>
-    <div class="form-grid single">
-      <div class="form-group"><label class="fl">// TITLE</label>
-        <input class="fi" id="iTitle" placeholder="Article title (shown on your site)"/>
-      </div>
-    </div>
+
     <div class="form-grid">
       <div class="form-group"><label class="fl">// PLATFORM</label>
         <select class="fi" id="iPlatform" onchange="syncImportLabel()">
@@ -620,31 +617,26 @@ async function importUrl() {
   if (!url) { status("iStatus","// URL required.",false); return; }
   if (!url.startsWith("http")) { status("iStatus","// Enter a valid URL starting with https://",false); return; }
 
-  status("iStatus","// Saving link... ⏳");
-
-  const title = document.getElementById("iTitle").value.trim();
-  if (!title) { status("iStatus","// Title required.",false); return; }
+  status("iStatus","// Fetching RSS feed & importing... ⏳ (may take 15–30s)");
 
   const payload = {
-    url,
-    title,
+    medium_url:     url,
     platform:       document.getElementById("iPlatform").value,
     platform_label: document.getElementById("iLabel").value,
     difficulty:     document.getElementById("iDiff").value,
     category:       document.getElementById("iCat").value,
     tags:           document.getElementById("iTags").value,
-    excerpt:        document.getElementById("iExcerpt").value,
   };
 
   try {
-    const r = await api("/api/admin/import/link", {
+    const r = await api("/api/admin/import/medium", {
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body: JSON.stringify(payload)
     });
     const d = await r.json();
     if (r.ok) {
-      status("iStatus", `// ✓ Imported — "${d.title}" | slug: ${d.slug} | ${d.image_count} image(s)`);
+      status("iStatus", `// ✓ Imported — "${d.title}" | slug: ${d.slug} | ${d.image_count} image(s) | tags: ${(d.tags||[]).join(", ")}`);
       document.getElementById("iUrl").value = "";
     } else {
       status("iStatus", `// Error: ${d.detail}`, false);
