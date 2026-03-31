@@ -298,12 +298,17 @@ tr:hover td{background:rgba(0,255,136,.03)}
 
   <!-- IMPORT FROM URL -->
   <div class="panel" id="tab-import">
-    <h2>IMPORT FROM URL</h2>
-    <p style="font-size:.8rem;color:var(--dim);margin-bottom:1.5rem">// Paste a Medium article URL — it will be fetched, parsed and saved as a writeup automatically.</p>
+    <h2>ADD EXTERNAL LINK (Medium / Blog)</h2>
+    <p style="font-size:.8rem;color:var(--dim);margin-bottom:1.5rem">// Paste any article URL — it will show inside your site in an iframe. No content extraction needed.</p>
 
     <div class="form-grid single">
       <div class="form-group"><label class="fl">// ARTICLE URL</label>
         <input class="fi" id="iUrl" placeholder="https://medium.com/@user/article-title-xxxx"/>
+      </div>
+    </div>
+    <div class="form-grid single">
+      <div class="form-group"><label class="fl">// TITLE</label>
+        <input class="fi" id="iTitle" placeholder="Article title (shown on your site)"/>
       </div>
     </div>
     <div class="form-grid">
@@ -615,10 +620,14 @@ async function importUrl() {
   if (!url) { status("iStatus","// URL required.",false); return; }
   if (!url.startsWith("http")) { status("iStatus","// Enter a valid URL starting with https://",false); return; }
 
-  status("iStatus","// Fetching article... ⏳ (may take 10–20s)");
+  status("iStatus","// Saving link... ⏳");
+
+  const title = document.getElementById("iTitle").value.trim();
+  if (!title) { status("iStatus","// Title required.",false); return; }
 
   const payload = {
     url,
+    title,
     platform:       document.getElementById("iPlatform").value,
     platform_label: document.getElementById("iLabel").value,
     difficulty:     document.getElementById("iDiff").value,
@@ -628,7 +637,7 @@ async function importUrl() {
   };
 
   try {
-    const r = await api("/api/admin/import/medium", {
+    const r = await api("/api/admin/import/link", {
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body: JSON.stringify(payload)
