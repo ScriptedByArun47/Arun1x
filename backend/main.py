@@ -32,8 +32,7 @@ from docx import Document as DocxDocument
 from dotenv import load_dotenv
 from io import BytesIO
 import cloudinary, cloudinary.uploader
-import asyncio, os, re, httpx
-from bs4 import BeautifulSoup
+import asyncio, os, re
 
 # ─────────────────────────────────────────────
 # CONFIG
@@ -387,154 +386,54 @@ async def mark_read(mid: str, _: str = Depends(require_admin)):
     return {"marked": True}
 
 # ═════════════════════════════════════════════
-#  MEDIUM IMPORT  — fetch article by URL
+#  MEDIUM / EXTERNAL LINK IMPORT
 # ═════════════════════════════════════════════
 
-class MediumImportIn(BaseModel):
+class LinkImportIn(BaseModel):
     url:            str
-    platform:       str        = "daily"
-    platform_label: str        = "Medium"
-    difficulty:     str        = "easy"
-    category:       str        = ""
-    tags:           str        = ""
-    excerpt:        str        = ""
+    title:          str
+    platform:       str = "daily"
+    platform_label: str = "Medium"
+    difficulty:     str = "easy"
+    category:       str = ""
+    tags:           str = ""
+    excerpt:        str = ""
 
-@app.post("/api/admin/import/medium", status_code=201)
-async def import_medium(data: MediumImportIn, _: str = Depends(require_admin)):
-    """🔒 ADMIN ONLY — Import a Medium article by URL into writeups."""
+@app.post("/api/admin/import/link", status_code=201)
+async def import_link(data: LinkImportIn, _: str = Depends(require_admin)):
+    """🔒 ADMIN ONLY — Save an external article URL as a writeup (shown in iframe)."""
+    if not data.url.startswith("http"):
+        raise HTTPException(400, "Invalid URL.")
+    if not data.title.strip():
+        raise HTTPException(400, "Title is required.")
 
-    # ── Fetch the page ──
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
-    }
-    try:
-        async with httpx.AsyncClient(follow_redirects=True, timeout=20) as client_http:
-            resp = await client_http.get(data.url, headers=headers)
-        if resp.status_code != 200:
-            raise HTTPException(400, f"Could not fetch URL (status {resp.status_code})")
-    except httpx.RequestError as e:
-        raise HTTPException(400, f"Request failed: {e}")
-
-    soup = BeautifulSoup(resp.text, "html.parser")
-
-    # ── Extract title ──
-    title = ""
-    if soup.find("h1"):
-        title = soup.find("h1").get_text(strip=True)
-    if not title:
-        og = soup.find("meta", property="og:title")
-        title = og["content"] if og else "Untitled"
-
-    # ── Extract excerpt ──
-    excerpt = data.excerpt
-    if not excerpt:
-        desc = soup.find("meta", property="og:description") or soup.find("meta", attrs={"name":"description"})
-        excerpt = desc["content"][:300] if desc else ""
-
-    # ── Extract article body ──
-    # Medium uses <article> tag
-    article = soup.find("article") or soup.find("main") or soup.body
-    if not article:
-        raise HTTPException(422, "Could not find article content in page.")
-
-    # ── Convert HTML → Markdown ──
-    lines = []
-    img_counter = [0]
-
-    def process_node(tag):
-        name = tag.name if hasattr(tag, "name") else None
-        if name is None:
-            text = str(tag).strip()
-            if text: lines.append(text)
-            return
-        if name in ("script","style","nav","footer","header","aside","button","form"): return
-        if name == "h1": lines.append(f"# {tag.get_text(strip=True)}"); lines.append("")
-        elif name == "h2": lines.append(f"## {tag.get_text(strip=True)}"); lines.append("")
-        elif name == "h3": lines.append(f"### {tag.get_text(strip=True)}"); lines.append("")
-        elif name == "h4": lines.append(f"#### {tag.get_text(strip=True)}"); lines.append("")
-        elif name == "p":
-            text = tag.get_text(strip=True)
-            if text: lines.append(text); lines.append("")
-        elif name in ("pre","code"):
-            code = tag.get_text()
-            lines.append(f"```\n{code}\n```"); lines.append("")
-        elif name == "blockquote":
-            lines.append(f"> {tag.get_text(strip=True)}"); lines.append("")
-        elif name == "hr":
-            lines.append("---"); lines.append("")
-        elif name in ("ul","ol"):
-            for li in tag.find_all("li", recursive=False):
-                lines.append(f"- {li.get_text(strip=True)}")
-            lines.append("")
-        elif name == "img":
-            src = tag.get("src","") or tag.get("data-src","")
-            alt = tag.get("alt","screenshot")
-            if src and src.startswith("http"):
-                img_counter[0] += 1
-                # Upload to Cloudinary
-                try:
-                    import httpx as _httpx
-                    import asyncio as _asyncio
-                    img_resp = _asyncio.get_event_loop().run_until_complete(
-                        _async_fetch_image(src)
-                    )
-                    if img_resp:
-                        ext = src.split(".")[-1].split("?")[0][:4] or "jpg"
-                        cdn_url = cdn_upload(img_resp, ext, slug_temp[0], f"img_{img_counter[0]}")
-                        lines.append(f"![{alt}]({cdn_url})")
-                        lines.append("")
-                        return
-                except Exception as e:
-                    print(f"  [img] skip {src}: {e}")
-                lines.append(f"![{alt}]({src})")
-                lines.append("")
-        else:
-            for child in tag.children:
-                process_node(child)
-
-    async def _async_fetch_image(url):
-        async with httpx.AsyncClient(timeout=10) as c:
-            r = await c.get(url)
-            return r.content if r.status_code == 200 else None
-
-    # Build slug first (needed for Cloudinary folder)
-    base = slugify(title); sl = base; n = 1
+    base = slugify(data.title); sl = base; n = 1
     while await db.writeups.find_one({"slug": sl}):
         sl = f"{base}-{n}"; n += 1
-    slug_temp = [sl]
 
-    # Process article nodes
-    for child in article.children:
-        process_node(child)
-
-    content = "\n".join(lines).strip()
-    if not content:
-        raise HTTPException(422, "Article content is empty after parsing.")
-
-    img_count = content.count("![")
     tags_list = [t.strip() for t in data.tags.split(",") if t.strip()]
 
     result = await db.writeups.insert_one({
-        "title":          title,
+        "title":          data.title.strip(),
         "platform":       data.platform,
         "platform_label": data.platform_label,
-        "excerpt":        excerpt,
+        "excerpt":        data.excerpt.strip(),
         "difficulty":     data.difficulty,
-        "category":       data.category,
+        "category":       data.category.strip(),
         "tags":           tags_list,
-        "content":        content,
+        "content":        "",           # no content — shown via iframe
         "file_name":      data.url,
         "file_type":      ".url",
         "slug":           sl,
-        "image_count":    img_count,
-        "source_url":     data.url,
+        "image_count":    0,
+        "source_url":     data.url,     # ← key field for iframe
         "date":           datetime.utcnow().strftime("%Y-%m-%d"),
         "created_at":     datetime.utcnow(),
         "views":          0,
     })
-    print(f"[admin] Medium import saved — slug={sl}, images={img_count}")
-    return {"id": str(result.inserted_id), "slug": sl, "title": title,
-            "image_count": img_count, "message": f"Imported '{title}'"}
+    print(f"[admin] Link saved — slug={sl}, url={data.url}")
+    return {"id": str(result.inserted_id), "slug": sl,
+            "message": f"Saved '{data.title}' as iframe writeup"}
 
 # ═════════════════════════════════════════════
 #  ADMIN HTML PANEL  — served at /admin
