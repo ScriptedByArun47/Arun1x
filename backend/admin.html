@@ -175,6 +175,7 @@ tr:hover td{background:rgba(0,255,136,.03)}
     <button class="tab" onclick="switchTab('projects')">PROJECTS</button>
     <button class="tab" onclick="switchTab('ctf')">CTF</button>
     <button class="tab" onclick="switchTab('messages')">MESSAGES</button>
+    <button class="tab" onclick="switchTab('import')">IMPORT URL</button>
   </div>
 
   <!-- DASHBOARD -->
@@ -217,6 +218,7 @@ tr:hover td{background:rgba(0,255,136,.03)}
       </div>
       <div class="form-group"><label class="fl">// CATEGORY</label><input class="fi" id="wCat" placeholder="Web / Command Injection"/></div>
       <div class="form-group"><label class="fl">// TAGS (comma separated)</label><input class="fi" id="wTags" placeholder="rce,privesc,linux"/></div>
+      <div class="form-group"><label class="fl">// MEDIUM URL (optional)</label><input class="fi" id="wMedium" placeholder="https://medium.com/@you/your-article"/></div>
     </div>
     <div class="form-grid single">
       <div class="form-group"><label class="fl">// EXCERPT</label><textarea class="fi" id="wExcerpt" placeholder="Short description shown on the card..."></textarea></div>
@@ -294,7 +296,52 @@ tr:hover td{background:rgba(0,255,136,.03)}
     </div>
   </div>
 
-  <!-- MESSAGES -->
+  <!-- IMPORT FROM URL -->
+  <div class="panel" id="tab-import">
+    <h2>IMPORT FROM URL</h2>
+    <p style="font-size:.8rem;color:var(--dim);margin-bottom:1.5rem">// Paste a Medium article URL — it will be fetched, parsed and saved as a writeup automatically.</p>
+
+    <div class="form-grid single">
+      <div class="form-group"><label class="fl">// ARTICLE URL</label>
+        <input class="fi" id="iUrl" placeholder="https://medium.com/@user/article-title-xxxx"/>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label class="fl">// PLATFORM</label>
+        <select class="fi" id="iPlatform" onchange="syncImportLabel()">
+          <option value="daily">daily</option>
+          <option value="tryhackme">tryhackme</option>
+          <option value="portswigger">portswigger</option>
+          <option value="picoctf">picoctf</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="fl">// PLATFORM LABEL</label>
+        <input class="fi" id="iLabel" value="Medium"/>
+      </div>
+      <div class="form-group"><label class="fl">// DIFFICULTY</label>
+        <select class="fi" id="iDiff">
+          <option value="easy">easy</option>
+          <option value="medium" selected>medium</option>
+          <option value="hard">hard</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="fl">// CATEGORY</label>
+        <input class="fi" id="iCat" placeholder="Web / SQLi"/>
+      </div>
+      <div class="form-group"><label class="fl">// TAGS (comma separated)</label>
+        <input class="fi" id="iTags" placeholder="sqli,web,medium"/>
+      </div>
+    </div>
+    <div class="form-grid single">
+      <div class="form-group"><label class="fl">// EXCERPT (leave blank to auto-extract)</label>
+        <textarea class="fi" id="iExcerpt" placeholder="Short description..."></textarea>
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="importUrl()">IMPORT ARTICLE ↓</button>
+    <div class="status-msg" id="iStatus"></div>
+  </div>
+
+<!-- MESSAGES -->
   <div class="panel" id="tab-messages">
     <h2>CONTACT MESSAGES</h2>
     <button class="btn btn-blue" onclick="loadMessages()" style="margin-bottom:1.5rem">REFRESH</button>
@@ -344,6 +391,7 @@ function switchTab(name) {
   if (name === "projects")   loadProjects();
   if (name === "ctf")        loadCTF();
   if (name === "messages")   loadMessages();
+  // import tab needs no load
 }
 
 // ── API helpers ────────────────────────────────────────────────
@@ -412,6 +460,7 @@ async function uploadWriteup() {
   fd.append("category",       document.getElementById("wCat").value);
   fd.append("tags",           document.getElementById("wTags").value);
   fd.append("excerpt",        document.getElementById("wExcerpt").value);
+  fd.append("medium_url",     document.getElementById("wMedium").value);
 
   try {
     const r = await api("/api/admin/writeups/upload", { method:"POST", body:fd });
@@ -553,6 +602,47 @@ async function loadMessages() {
 async function markRead(id, btn) {
   await api(`/api/admin/messages/${id}/read`,{method:"PATCH"});
   loadMessages();
+}
+
+// ── Import from URL ──────────────────────────────────────────
+function syncImportLabel() {
+  const map = { tryhackme:"TryHackMe", portswigger:"PortSwigger", picoctf:"PicoCTF", daily:"Medium" };
+  document.getElementById("iLabel").value = map[document.getElementById("iPlatform").value] || "Medium";
+}
+
+async function importUrl() {
+  const url = document.getElementById("iUrl").value.trim();
+  if (!url) { status("iStatus","// URL required.",false); return; }
+  if (!url.startsWith("http")) { status("iStatus","// Enter a valid URL starting with https://",false); return; }
+
+  status("iStatus","// Fetching article... ⏳ (may take 10–20s)");
+
+  const payload = {
+    url,
+    platform:       document.getElementById("iPlatform").value,
+    platform_label: document.getElementById("iLabel").value,
+    difficulty:     document.getElementById("iDiff").value,
+    category:       document.getElementById("iCat").value,
+    tags:           document.getElementById("iTags").value,
+    excerpt:        document.getElementById("iExcerpt").value,
+  };
+
+  try {
+    const r = await api("/api/admin/import/medium", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (r.ok) {
+      status("iStatus", `// ✓ Imported — "${d.title}" | slug: ${d.slug} | ${d.image_count} image(s)`);
+      document.getElementById("iUrl").value = "";
+    } else {
+      status("iStatus", `// Error: ${d.detail}`, false);
+    }
+  } catch(e) {
+    status("iStatus","// Network error — " + e.message, false);
+  }
 }
 
 // ── Sync label on load ────────────────────────────────────────
