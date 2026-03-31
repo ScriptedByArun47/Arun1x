@@ -386,54 +386,222 @@ async def mark_read(mid: str, _: str = Depends(require_admin)):
     return {"marked": True}
 
 # ═════════════════════════════════════════════
-#  MEDIUM / EXTERNAL LINK IMPORT
+#  MEDIUM RSS IMPORT
 # ═════════════════════════════════════════════
+import urllib.request
+import xml.etree.ElementTree as ET
+import html as html_module
 
-class LinkImportIn(BaseModel):
-    url:            str
-    title:          str
+def html_to_markdown(html_str: str, slug: str) -> str:
+    """Convert HTML string to Markdown. Uploads images to Cloudinary."""
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html_str, "html.parser")
+    lines = []
+    img_counter = [0]
+
+    def process(tag):
+        name = getattr(tag, "name", None)
+        if name is None:
+            t = str(tag).strip()
+            if t: lines.append(t)
+            return
+        if name in ("script","style","nav","footer","button"): return
+        if name == "h1": lines += [f"# {tag.get_text(strip=True)}", ""]
+        elif name == "h2": lines += [f"## {tag.get_text(strip=True)}", ""]
+        elif name == "h3": lines += [f"### {tag.get_text(strip=True)}", ""]
+        elif name == "h4": lines += [f"#### {tag.get_text(strip=True)}", ""]
+        elif name == "p":
+            t = tag.get_text(strip=True)
+            if t: lines += [t, ""]
+        elif name in ("pre", "code"):
+            lines += [f"```\n{tag.get_text()}\n```", ""]
+        elif name == "blockquote":
+            lines += [f"> {tag.get_text(strip=True)}", ""]
+        elif name == "hr": lines += ["---", ""]
+        elif name in ("ul","ol"):
+            for li in tag.find_all("li", recursive=False):
+                lines.append(f"- {li.get_text(strip=True)}")
+            lines.append("")
+        elif name == "img":
+            src = tag.get("src","") or tag.get("data-src","")
+            alt = tag.get("alt","screenshot")
+            if src and src.startswith("http"):
+                img_counter[0] += 1
+                try:
+                    req = urllib.request.Request(src, headers={"User-Agent":"Mozilla/5.0"})
+                    img_bytes = urllib.request.urlopen(req, timeout=10).read()
+                    ext = src.split(".")[-1].split("?")[0][:4] or "jpg"
+                    cdn_url = cdn_upload(img_bytes, ext, slug, f"img_{img_counter[0]}")
+                    lines += [f"![{alt}]({cdn_url})", ""]
+                    return
+                except Exception as e:
+                    print(f"  [img] skip: {e}")
+                lines += [f"![{alt}]({src})", ""]
+        else:
+            for child in tag.children:
+                process(child)
+
+    for child in soup.body.children if soup.body else soup.children:
+        process(child)
+    return "\n".join(lines).strip()
+
+class MediumRSSIn(BaseModel):
+    medium_url:     str            # article URL OR @username profile URL
     platform:       str = "daily"
     platform_label: str = "Medium"
     difficulty:     str = "easy"
     category:       str = ""
     tags:           str = ""
-    excerpt:        str = ""
 
-@app.post("/api/admin/import/link", status_code=201)
-async def import_link(data: LinkImportIn, _: str = Depends(require_admin)):
-    """🔒 ADMIN ONLY — Save an external article URL as a writeup (shown in iframe)."""
-    if not data.url.startswith("http"):
-        raise HTTPException(400, "Invalid URL.")
-    if not data.title.strip():
-        raise HTTPException(400, "Title is required.")
+@app.post("/api/admin/import/medium", status_code=201)
+async def import_medium_rss(data: MediumRSSIn, _: str = Depends(require_admin)):
+    """
+    🔒 ADMIN ONLY — Import a Medium article via RSS (no scraping, always works).
 
-    base = slugify(data.title); sl = base; n = 1
+    Pass the full article URL:
+      https://medium.com/@arun1x/article-slug-xxxx
+
+    The backend extracts the username, fetches the RSS feed,
+    finds the matching article, converts HTML → Markdown,
+    uploads images to Cloudinary, saves to MongoDB.
+    """
+    url = data.medium_url.strip()
+
+    # ── Extract Medium username from URL ──
+    # Handles: medium.com/@user/slug  OR  user.medium.com/slug
+    username = None
+    if "medium.com/@" in url:
+        username = url.split("medium.com/@")[1].split("/")[0]
+    elif ".medium.com" in url:
+        username = url.split(".medium.com")[0].split("/")[-1].split(".")[-1]
+
+    if not username:
+        raise HTTPException(400, "Could not extract Medium username from URL. "
+                               "Use format: https://medium.com/@username/article-slug")
+
+    # ── Fetch RSS feed ──
+    rss_url = f"https://medium.com/feed/@{username}"
+    print(f"[import] Fetching RSS: {rss_url}")
+    try:
+        req = urllib.request.Request(
+            rss_url,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; RSS reader)"}
+        )
+        rss_bytes = await asyncio.get_event_loop().run_in_executor(
+            None, lambda: urllib.request.urlopen(req, timeout=20).read()
+        )
+    except Exception as e:
+        raise HTTPException(400, f"Could not fetch RSS feed for @{username}: {e}")
+
+    # ── Parse XML ──
+    try:
+        root = ET.fromstring(rss_bytes)
+    except ET.ParseError as e:
+        raise HTTPException(422, f"RSS parse error: {e}")
+
+    ns = {"content": "http://purl.org/rss/1.0/modules/content/"}
+    channel = root.find("channel")
+    if not channel:
+        raise HTTPException(422, "Invalid RSS feed structure.")
+
+    items = channel.findall("item")
+    if not items:
+        raise HTTPException(404, f"No articles found in @{username}'s RSS feed.")
+
+    # ── Find matching article by URL ──
+    target_item = None
+    url_slug = url.rstrip("/").split("/")[-1].lower()
+
+    for item in items:
+        item_link = (item.findtext("link") or "").strip()
+        item_guid = (item.findtext("guid") or "").strip()
+        # Match by slug in URL
+        if url_slug and (url_slug in item_link or url_slug in item_guid):
+            target_item = item
+            break
+
+    # If no match found, use the latest article
+    if not target_item:
+        target_item = items[0]
+        print(f"[import] No URL match — using latest article")
+
+    # ── Extract fields ──
+    title   = html_module.unescape(target_item.findtext("title") or "Untitled").strip()
+    link    = (target_item.findtext("link") or url).strip()
+    pub_date= target_item.findtext("pubDate") or ""
+    # Try to parse date
+    try:
+        from email.utils import parsedate_to_datetime
+        date_str = parsedate_to_datetime(pub_date).strftime("%Y-%m-%d")
+    except Exception:
+        date_str = datetime.utcnow().strftime("%Y-%m-%d")
+
+    # Auto tags from RSS categories
+    auto_tags = [c.text for c in target_item.findall("category") if c.text]
+    manual_tags = [t.strip() for t in data.tags.split(",") if t.strip()]
+    all_tags = list(dict.fromkeys(manual_tags + auto_tags))[:8]
+
+    # Full HTML content from content:encoded
+    content_encoded = target_item.find("content:encoded", ns)
+    html_content = ""
+    if content_encoded is not None and content_encoded.text:
+        html_content = content_encoded.text
+    else:
+        # fallback to description
+        html_content = target_item.findtext("description") or ""
+
+    if not html_content:
+        raise HTTPException(422, "Article has no content in RSS feed.")
+
+    # Auto excerpt from description
+    from bs4 import BeautifulSoup as _BS
+    desc_html = target_item.findtext("description") or html_content[:500]
+    excerpt = _BS(desc_html, "html.parser").get_text()[:300].strip()
+
+    # ── Build slug ──
+    base = slugify(title); sl = base; n = 1
     while await db.writeups.find_one({"slug": sl}):
         sl = f"{base}-{n}"; n += 1
 
-    tags_list = [t.strip() for t in data.tags.split(",") if t.strip()]
+    # ── Convert HTML → Markdown (with Cloudinary image upload) ──
+    print(f"[import] Converting HTML → Markdown for '{title}'")
+    try:
+        content_md = await asyncio.get_event_loop().run_in_executor(
+            None, html_to_markdown, html_content, sl
+        )
+    except Exception as e:
+        raise HTTPException(422, f"Content conversion failed: {e}")
 
+    img_count = content_md.count("![")
+
+    # ── Save to MongoDB ──
     result = await db.writeups.insert_one({
-        "title":          data.title.strip(),
+        "title":          title,
         "platform":       data.platform,
         "platform_label": data.platform_label,
-        "excerpt":        data.excerpt.strip(),
+        "excerpt":        excerpt,
         "difficulty":     data.difficulty,
         "category":       data.category.strip(),
-        "tags":           tags_list,
-        "content":        "",           # no content — shown via iframe
-        "file_name":      data.url,
-        "file_type":      ".url",
+        "tags":           all_tags,
+        "content":        content_md,
+        "file_name":      link,
+        "file_type":      ".rss",
         "slug":           sl,
-        "image_count":    0,
-        "source_url":     data.url,     # ← key field for iframe
-        "date":           datetime.utcnow().strftime("%Y-%m-%d"),
+        "image_count":    img_count,
+        "source_url":     link,
+        "date":           date_str,
         "created_at":     datetime.utcnow(),
         "views":          0,
     })
-    print(f"[admin] Link saved — slug={sl}, url={data.url}")
-    return {"id": str(result.inserted_id), "slug": sl,
-            "message": f"Saved '{data.title}' as iframe writeup"}
+    print(f"[import] Saved — slug={sl}, images={img_count}")
+    return {
+        "id":          str(result.inserted_id),
+        "slug":        sl,
+        "title":       title,
+        "image_count": img_count,
+        "tags":        all_tags,
+        "message":     f"Imported '{title}' from @{username}'s RSS"
+    }
 
 # ═════════════════════════════════════════════
 #  ADMIN HTML PANEL  — served at /admin
