@@ -1,8 +1,8 @@
 {
   "rewrites": [
-    { "source": "/writeup", "destination": "/Writeup.html" },
+    { "source": "/writeup",      "destination": "/Writeup.html" },
     { "source": "/writeup.html", "destination": "/Writeup.html" },
-    { "source": "/sitemap.xml", "destination": "https://arun1x-1.onrender.com/sitemap.xml" }
+    { "source": "/sitemap.xml",  "destination": "https://arun1x-1.onrender.com/sitemap.xml" }
   ],
   "headers": [
     {
