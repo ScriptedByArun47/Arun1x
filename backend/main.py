@@ -1,22 +1,6 @@
 """
 Arun1x Portfolio Backend — v5.0
 FastAPI + MongoDB + Cloudinary + Admin Panel
-
-PUBLIC  : GET  /api/writeups  /api/writeups/{slug}
-          GET  /api/projects  /api/ctf  /api/skills  /api/stats
-          POST /api/contact
-ADMIN   : All POST/DELETE/PATCH — require X-Admin-Key header
-          GET  /admin  — HTML admin dashboard (password-protected in browser)
-HEALTH  : GET  /  and  GET  /health-check
-
-.env:
-    MONGO_URI=mongodb+srv://...
-    DB_NAME=portfolio_db
-    CLOUDINARY_CLOUD_NAME=...
-    CLOUDINARY_API_KEY=...
-    CLOUDINARY_API_SECRET=...
-    ADMIN_API_KEY=<python -c "import secrets; print(secrets.token_hex(32))">
-    FRONTEND_URL=https://scriptedbyarun47.github.io
 """
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Security, Depends, Request
@@ -622,6 +606,37 @@ async def admin_panel():
         raise HTTPException(404, "admin.html not found next to main.py")
     with open(html_path, "r") as f:
         return HTMLResponse(content=f.read())
+
+# ═════════════════════════════════════════════
+#  DYNAMIC SITEMAP  — for Google indexing
+# ═════════════════════════════════════════════
+from fastapi.responses import Response
+
+@app.get("/sitemap.xml")
+async def sitemap():
+    base = "https://arun1x.vercel.app"
+    urls = [
+        f"<url><loc>{base}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>",
+        f"<url><loc>{base}/index.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>",
+    ]
+    # Add all writeup URLs
+    cursor = db.writeups.find({}, {"slug":1, "date":1, "title":1})
+    async for doc in cursor:
+        slug = doc.get("slug","")
+        date = doc.get("date", "")
+        urls.append(
+            f"<url>"
+            f"<loc>{base}/Writeup.html?slug={slug}</loc>"
+            f"<lastmod>{date}</lastmod>"
+            f"<changefreq>monthly</changefreq>"
+            f"<priority>0.8</priority>"
+            f"</url>"
+        )
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    xml += "\n".join(urls)
+    xml += "\n</urlset>"
+    return Response(content=xml, media_type="application/xml")
 
 # ─────────────────────────────────────────────
 if __name__ == "__main__":
