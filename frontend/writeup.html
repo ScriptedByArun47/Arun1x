@@ -4,6 +4,11 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Writeup — Arun1x</title>
+  <meta name="robots" content="index, follow"/>
+  <meta name="author" content="ArunKumar L"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:site_name" content="Arun1x — Cybersecurity Portfolio"/>
+  <!-- Dynamic meta updated by JS after writeup loads -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
@@ -324,7 +329,48 @@ function buildTOC(container) {
 
 /* ── Render writeup page ── */
 function renderPage(w) {
-  document.title = `${w.title} — Arun1x`;
+  // ── Dynamic SEO meta tags ──
+  document.title = `${w.title} | Arun1x CTF Writeup`;
+
+  const setMeta = (sel, val) => {
+    let el = document.querySelector(sel);
+    if (!el) { el = document.createElement("meta"); document.head.appendChild(el); }
+    el.setAttribute(sel.includes("property") ? "property" : "name",
+      sel.match(/["']([^"']+)["']/)[1]);
+    el.setAttribute("content", val);
+  };
+
+  const desc = w.excerpt || `${w.title} — CTF writeup by Arun1x. Platform: ${w.platform_label}. Difficulty: ${w.difficulty}.`;
+  const tags = (w.tags || []).join(", ");
+
+  setMeta('[name="description"]',           desc);
+  setMeta('[name="keywords"]',              `${w.title}, ${tags}, CTF writeup, TryHackMe, cybersecurity, Arun1x, ${w.platform_label}`);
+  setMeta('[property="og:title"]',          `${w.title} | Arun1x CTF Writeup`);
+  setMeta('[property="og:description"]',    desc);
+  setMeta('[property="og:url"]',            window.location.href);
+  setMeta('[name="twitter:title"]',         `${w.title} | Arun1x`);
+  setMeta('[name="twitter:description"]',   desc);
+
+  // JSON-LD for each writeup — Google shows this as rich result
+  const existing = document.getElementById("writeup-ld");
+  if (existing) existing.remove();
+  const ld = document.createElement("script");
+  ld.type = "application/ld+json";
+  ld.id   = "writeup-ld";
+  ld.text = JSON.stringify({
+    "@context":       "https://schema.org",
+    "@type":          "Article",
+    "headline":       w.title,
+    "description":    desc,
+    "author":         { "@type": "Person", "name": "ArunKumar L", "url": "https://arun1x.vercel.app" },
+    "publisher":      { "@type": "Person", "name": "Arun1x" },
+    "datePublished":  w.date,
+    "keywords":       tags,
+    "url":            window.location.href,
+    "inLanguage":     "en"
+  });
+  document.head.appendChild(ld);
+
   document.getElementById("viewCount").textContent = `${w.views || 0} views`;
 
   const contentDiv = document.createElement("div");
