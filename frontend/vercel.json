@@ -1,13 +1,10 @@
 {
   "rewrites": [
     { "source": "/writeup", "destination": "/Writeup.html" },
-    { "source": "/writeup.html", "destination": "/Writeup.html" }
+    { "source": "/writeup.html", "destination": "/Writeup.html" },
+    { "source": "/sitemap.xml", "destination": "https://arun1x-1.onrender.com/sitemap.xml" }
   ],
   "headers": [
-    {
-      "source": "/sitemap.xml",
-      "headers": [{ "key": "Content-Type", "value": "application/xml" }]
-    },
     {
       "source": "/robots.txt",
       "headers": [{ "key": "Content-Type", "value": "text/plain" }]
