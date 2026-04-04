@@ -611,7 +611,7 @@ async def admin_panel():
 #  DYNAMIC SITEMAP  — for Google indexing
 # ═════════════════════════════════════════════
 from fastapi.responses import Response
-
+ 
 @app.get("/sitemap.xml")
 async def sitemap():
     base = "https://arun1x.vercel.app"
@@ -626,7 +626,7 @@ async def sitemap():
         date = doc.get("date", "")
         urls.append(
             f"<url>"
-            f"<loc>{base}/Writeup.html?slug={slug}</loc>"
+            f"<loc>{base}/writeup.html?slug={slug}</loc>"
             f"<lastmod>{date}</lastmod>"
             f"<changefreq>monthly</changefreq>"
             f"<priority>0.8</priority>"
@@ -638,7 +638,6 @@ async def sitemap():
     xml += "\n</urlset>"
     return Response(content=xml, media_type="application/xml")
 
-# ─────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
